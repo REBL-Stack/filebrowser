@@ -9,8 +9,12 @@
     "url": "git+https://github.com/njordhov/react-blockstack.git"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.25",
+    "@fortawesome/free-solid-svg-icons": "^5.11.2",
+    "@fortawesome/react-fontawesome": "^0.1.7",
     "blockstack": "^19.3.0",
     "react": "^16.8.6",
+    "react-table": "7.0.0-beta.15",
     "react-blockstack": "^0.6.4",
     "react-blockstack-button": "^0.1.0",
     "react-dom": "^16.8.6",
