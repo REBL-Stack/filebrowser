@@ -1,7 +1,7 @@
 {
-  "name": "hello-blockstack",
+  "name": "filebrowser",
   "version": "0.0.0",
-  "description": "A simple Blockstack app using ReactJS",
+  "description": "A browser for Blockstack Gaia",
   "author": "",
   "license": "MIT",
   "repository": {
@@ -13,12 +13,18 @@
     "@fortawesome/free-solid-svg-icons": "^5.11.2",
     "@fortawesome/react-fontawesome": "^0.1.7",
     "blockstack": "^19.3.0",
+    "file-saver": "^2.0.2",
+    "file-selector": "^0.1.12",
+    "filesize": "^5.0.3",
+    "jquery": "^3.4.1",
+    "popper.js": "^1.16.0",
     "react": "^16.8.6",
-    "react-table": "7.0.0-beta.15",
     "react-blockstack": "^0.6.4",
     "react-blockstack-button": "^0.1.0",
-    "react-dom": "^16.8.6",
-    "react-router-dom": "^5.0.0"
+    "react-dom": "^16.9.0",
+    "react-dropzone": "^10.1.10",
+    "react-router-dom": "^5.1.0",
+    "reactstrap": "^8.1.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -43,7 +49,9 @@
   },
   "devDependencies": {
     "bootstrap": "^4.3.1",
+    "bootswatch": "^4.3.1",
+    "bootstrap-material-design": "^4.1.2",
     "react-test-renderer": "^16.8.6",
-    "react-scripts": "^3.1.1"
+    "react-scripts": "^3.2.0"
   }
 }

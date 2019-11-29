@@ -1,114 +1,77 @@
-import React, {useRef} from 'react'
+import React, {useRef, useState, useEffect} from 'react'
 import { useFile, useFilesList } from 'react-blockstack'
-import {useTable,
-        useGroupBy,
-        useFilters,
-        useSortBy,
-        useExpanded} from 'react-table'
+import {useSave, useFilter, useMatchGlobal} from './filebrowser'
 
-function DefaultColumnFilter({
-  column: { filterValue, preFilteredRows, setFilter },
-}) {
-  const count = preFilteredRows.length
-
-  return (
-    <input
-      value={filterValue || ''}
-      onChange={e => {
-        setFilter(e.target.value || undefined) // Set undefined to remove the filter entirely
-      }}
-      placeholder={`Search ${count} records...`}
-    />
+function ExportFile ({filepath, onCompletion}) {
+  const [content] = useFile(filepath)
+  const {progress} = useSave(content, filepath, onCompletion)
+  console.log("PROGRESS:", progress)
+  return(
+    <div className="progress">
+      <div className="progress-bar progress-bar-striped progress-bar-animated"
+           role="progressbar" aria-valuenow={progress} aria-valuemin="0" aria-valuemax="100"
+           style={{width: "" + progress +"%", height: "100%"}}></div>
+    </div>
   )
 }
 
-function Table({ columns, data, filterTypes }) {
-  // Use the state and functions returned from useTable to build your UI
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-    state
-  } = useTable({
-    columns,
-    data,
-    filterTypes
-  }, useFilters)
+function MarkedMatch ({text, match}) {
+  const result = text && match && match(text)
+  const start = result && result.index
+  const end = result && (start + result[0].length)
   return (
-  <>
-    <code>{JSON.stringify(state.filters, null, 2)}</code>
-    <table {...getTableProps()}>
-      <thead>
-        {headerGroups.map(headerGroup => (
-          <tr {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map(column => (
-              <th {...column.getHeaderProps()}>
-                {column.render('Header')}
-                <div>{column.canFilter ? column.render('Filter') : null}</div>
-              </th>
-            ))}
-          </tr>
-        ))}
-      </thead>
-      <tbody {...getTableBodyProps()}>
-        {rows.map(
-          (row, i) => {
-            prepareRow(row);
-            return (
-              <tr {...row.getRowProps()}>
-                {row.cells.map(cell => {
-                  return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                })}
-              </tr>
-            )}
-        )}
+    start ?
+      <>{text.substring(0, start)}
+          <mark style={{paddingLeft: 0, paddingRight: 0}}>
+          {text.substring(start, end)}
+          </mark>
+          {text.substring(end)}
+      </>
+      :
+      <>{text} <code>{JSON.stringify(result)}</code></>
+  )
+}
+
+function FileRow ({item, filter}) {
+  const filename = item && item.fileName
+  const [saving, setSaving] = useState(false)
+  return (
+    <tr>
+      <th><MarkedMatch text={filename} match={filter}/></th>
+      <td>
+        {saving &&
+        <ExportFile filepath={filename} onCompletion={() => setSaving(false)}/>}
+        <button className="btn btn-primary"
+                disabled={saving}
+                onClick={() => setSaving(true)}>
+              Download
+        </button>
+      </td>
+    </tr>
+  )
+}
+
+function Table ({data, filter}) {
+  return (
+    <table className="table">
+      <tbody>
+        {data.map( (item) =>
+         <FileRow key={item.fileName} item={item} filter={filter}/> )}
       </tbody>
     </table>
-  </>
   )
 }
-
-const initColumns = [
-    {
-      Header: 'Files',
-      Filter: DefaultColumnFilter,
-      columns: [
-        {
-          Header: 'Name',
-          accessor: 'fileName',
-          Filter: DefaultColumnFilter,
-        },
-        {
-          Header: 'Size',
-          accessor: 'fileSize',
-          Filter: DefaultColumnFilter,
-        },
-      ],
-    }]
-
-const initFilters = {
-      text: (rows, id, filterValue) => {
-        return rows.filter(row => {
-          const rowValue = row.values[id]
-          return rowValue !== undefined
-            ? String(rowValue)
-                .toLowerCase()
-                .startsWith(String(filterValue).toLowerCase())
-            : true
-        })
-      },
-    }
 
 export default function Main ({ person }) {
   const [files] = useFilesList()
-  const columns = React.useMemo(() => initColumns)
-  const data = files.map((name) => ({fileName: name, fileSize: 0}))
-  const filterTypes = React.useMemo(() => initFilters)
+  const [match] = useMatchGlobal()
+  const [filter] = useFilter(match)
+  const data = files
+       .filter(filter || (() => true))
+       .map((name) => ({fileName: name, fileSize: 0}))
   return (
     <main>
-      <Table columns={columns} data={data} filterTypes={filterTypes}/>
+      <Table data={data} filter={filter}/>
     </main>
   )
 }
