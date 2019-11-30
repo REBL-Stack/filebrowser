@@ -14,7 +14,8 @@ export default function Landing (props) {
         <p>For use during app development, download
            the <a href="https://github.com/REBL-Stack/" target="_blank">repository</a> and
            run it with <code>npm start</code> on the same localhost
-           port as your app. Sign on to browse the files of your app.
+           port as your app. Sign in to browse the online files of your development app
+           that previously was accessed on the same port.
         </p>
         <p className="lead">
           <BlockstackButton onClick={ signIn }/>
