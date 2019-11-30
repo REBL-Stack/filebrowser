@@ -1,20 +1,26 @@
 import React, {useRef, useState, useEffect, useCallback} from 'react'
 import {fromEvent} from 'file-selector'
-
-function dispatch (event) {
-  // stand in
-  switch (event.action) {
-    case "upload":
-      const files = event.files
-      break;
-    default: break
-  }
-}
+import { useBlockstack } from 'react-blockstack'
+import {injectFile} from './filebrowser'
 
 export default function Upload ({className, uploadFiles}) {
+  const { userData, userSession } = useBlockstack()
   const fileUploader = useRef(null)
   // const [, dispatch] = useBrowser()
-  const upload = (files) => dispatch({action: "upload", files: files})
+  const upload = (files) => {
+    files.forEach( (file) => {
+        const name = file.name
+        const pathname = name
+        const reader = new FileReader()
+        reader.onload = () => {
+          const content = reader.result
+          userSession.putFile(pathname, content)
+          .then(() => injectFile(pathname))
+          .catch(err => console.warn("Failed to upload file:", err))
+        }
+      reader.readAsArrayBuffer(file)
+      }
+  )}
   const onFileChange = (evt) => {
     fromEvent(evt).then(upload)
   }
@@ -22,6 +28,7 @@ export default function Upload ({className, uploadFiles}) {
     fileUploader.current.click()
   }
   return (
+    userData &&
     <div className="Upload">
         <input ref={fileUploader} type="file" onChange={ onFileChange } style={{display: 'none'}}/>
         <button className="btn btn-primary" onClick={ uploadFile }>

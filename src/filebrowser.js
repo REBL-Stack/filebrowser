@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useCallback} from 'react'
-import { useBlockstack} from 'react-blockstack'
+import { useBlockstack, useFilesList} from 'react-blockstack'
 import FileSaver, { saveAs } from 'file-saver'
 import {fromEvent} from 'file-selector'
 import { Atom, swap, useAtom } from "@dbeining/react-atom"
@@ -10,6 +10,19 @@ export function useMatchGlobal() {
   const setMatch = (match) => swap(matchAtom, state => ({...state, match:match}))
   const {match} = useAtom(matchAtom)
   return [match, setMatch]
+}
+
+const uploadAtom = Atom.of([])
+
+export function injectFile (file) {
+  swap(uploadAtom, files => [file, ...files])
+}
+
+export function useFiles() {
+  console.log("Load files")
+  const uploaded = useAtom(uploadAtom)
+  const [files] = useFilesList()
+  return ([...uploaded, ...files])
 }
 
 export function useBrowser () {

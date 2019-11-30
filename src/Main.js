@@ -1,6 +1,6 @@
 import React, {useRef, useState, useEffect, useCallback} from 'react'
 import { useFile, useFilesList } from 'react-blockstack'
-import {useSave, useFilter, useMatchGlobal} from './filebrowser'
+import {useSave, useFilter, useMatchGlobal, useFiles} from './filebrowser'
 import {useDropzone} from 'react-dropzone'
 
 function ExportFile ({filepath, onCompletion}) {
@@ -85,7 +85,7 @@ function Dropzone({children}) {
 }
 
 export default function Main ({ person }) {
-  const [files] = useFilesList()
+  const files = useFiles()
   const data = files
        .map((name) => ({fileName: name, fileSize: 0}))
   return (
