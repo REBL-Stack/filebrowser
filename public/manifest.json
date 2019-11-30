@@ -3,9 +3,8 @@
   "description": "Browser for the online files of apps",
   "icons": [
     {
-    "src": "favicon.ico",
-    "sizes": "192x192",
-    "type": "image/png"
+    "src": "app_icon.svg",
+    "type": "image/svg"
     }
   ],
   "start_url": "./index.html",
