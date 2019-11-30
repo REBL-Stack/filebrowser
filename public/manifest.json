@@ -1,6 +1,6 @@
 {
-  "name": "Hello, Blockstack",
-  "description": "A simple demo of Blockstack Auth",
+  "name": "Blockstack FileBrowser",
+  "description": "Browser for the online files of apps",
   "icons": [
     {
     "src": "favicon.ico",

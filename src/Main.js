@@ -1,6 +1,7 @@
-import React, {useRef, useState, useEffect} from 'react'
+import React, {useRef, useState, useEffect, useCallback} from 'react'
 import { useFile, useFilesList } from 'react-blockstack'
 import {useSave, useFilter, useMatchGlobal} from './filebrowser'
+import {useDropzone} from 'react-dropzone'
 
 function ExportFile ({filepath, onCompletion}) {
   const [content] = useFile(filepath)
@@ -28,15 +29,18 @@ function MarkedMatch ({text, match}) {
           {text.substring(end)}
       </>
       :
-      <>{text} <code>{JSON.stringify(result)}</code></>
+      <>{text}</>
   )
 }
 
-function FileRow ({item, filter}) {
+function FileRow ({item}) {
+  const [match] = useMatchGlobal()
+  const [filter] = useFilter(match)
   const filename = item && item.fileName
   const [saving, setSaving] = useState(false)
+  const matching = filename && filter && filter(filename)
   return (
-    <tr>
+    <tr hidden={!matching}>
       <th><MarkedMatch text={filename} match={filter}/></th>
       <td>
         {saving &&
@@ -51,27 +55,42 @@ function FileRow ({item, filter}) {
   )
 }
 
-function Table ({data, filter}) {
+function Table ({data}) {
   return (
     <table className="table">
       <tbody>
         {data.map( (item) =>
-         <FileRow key={item.fileName} item={item} filter={filter}/> )}
+         <FileRow key={item.fileName} item={item}/> )}
       </tbody>
     </table>
   )
 }
 
+function Dropzone({children}) {
+  const onDrop = useCallback(acceptedFiles => {
+    console.log("Uploading...")
+  }, [])
+  const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
+
+  return (
+    <div {...getRootProps()}>
+      <input {...getInputProps()} />
+      {
+        (isDragActive ) &&
+          <p>Drop the files here ...</p>}
+      { children ||
+        <p>Drag 'n' drop some files here, or click to select files</p>}
+    </div>
+  )
+}
+
 export default function Main ({ person }) {
   const [files] = useFilesList()
-  const [match] = useMatchGlobal()
-  const [filter] = useFilter(match)
   const data = files
-       .filter(filter || (() => true))
        .map((name) => ({fileName: name, fileSize: 0}))
   return (
     <main>
-      <Table data={data} filter={filter}/>
+      <Table data={data}/>
     </main>
   )
 }

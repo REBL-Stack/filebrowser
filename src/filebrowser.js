@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useCallback} from 'react'
 import { useBlockstack} from 'react-blockstack'
 import FileSaver, { saveAs } from 'file-saver'
+import {fromEvent} from 'file-selector'
 import { Atom, swap, useAtom } from "@dbeining/react-atom"
 
 const matchAtom = Atom.of({match: ""})
@@ -11,6 +12,9 @@ export function useMatchGlobal() {
   return [match, setMatch]
 }
 
+export function useBrowser () {
+
+}
 
 function defaultFilter (type, match) {
   return ({"start": (name) => name.startsWith(match),
