@@ -2,7 +2,7 @@ import React, {useRef, useState, useEffect, useCallback} from 'react'
 import { useFile, useFilesList } from 'react-blockstack'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faDownload } from '@fortawesome/free-solid-svg-icons'
-import {useSave, useFilter, useMatchGlobal, useFiles} from './filebrowser'
+import {useSave, useFilter, useMatchGlobal, useFiles, useUpload} from './filebrowser'
 import {useDropzone} from 'react-dropzone'
 
 function ExportFile ({filepath, onCompletion}) {
@@ -62,7 +62,7 @@ function FileRow ({item}) {
 
 function Table ({data}) {
   return (
-    <table className="table table-striped table-dark">
+    <table className="table table-striped">
       <tbody>
         {data.map( (item) =>
          <FileRow key={item.fileName} item={item}/> )}
@@ -79,7 +79,7 @@ function Dropzone({children, className, handleUpload}) {
   const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop, className})
 
   return (
-    <div {...getRootProps()} className="Dropzone">
+    <div {...getRootProps()} className="Dropzone mx-5">
       <input {...getInputProps()} />
       {
         (isDragActive ) &&
@@ -92,13 +92,15 @@ function Dropzone({children, className, handleUpload}) {
 
 export default function Main ({ person }) {
   const files = useFiles()
-  const handleUpload = () => {}
+  const {handleUpload} = useUpload()
   const data = files
        .map((name) => ({fileName: name, fileSize: 0}))
   return (
-    <main className="vh-100 bg-dark">
-        {data &&
-         <Table data={data}/>}
+    <main className="vh-100">
+        <div className="h-50">
+          {data &&
+           <Table data={data}/>}
+         </div>
          <Dropzone className="mx-5 h-25"
                    handleUpload={handleUpload}>
 

@@ -71,7 +71,7 @@ export function useSave(content, filepath, onCompletion) {
 
 export function useUpload () {
   const { userSession } = useBlockstack()
-  const upload = (files) => {
+  const handleUpload = (files) => {
       files.forEach( (file) => {
           const name = file.name
           const pathname = name
@@ -86,12 +86,12 @@ export function useUpload () {
         }
     )}
   const onFileChange = (evt) => {
-        fromEvent(evt).then(upload)
+        fromEvent(evt).then(handleUpload)
       }
   const fileUploader = useRef(null)
   const inputProps = {ref: fileUploader, type:"file", onChange: onFileChange, style:{display: 'none'}}
   const uploadAction = () => {
       fileUploader.current.click()
     }
-  return ({uploadAction, inputProps})
+  return ({uploadAction, inputProps, handleUpload})
 }
