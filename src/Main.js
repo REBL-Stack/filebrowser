@@ -1,9 +1,10 @@
 import React, {useRef, useState, useEffect, useCallback} from 'react'
 import { useFile, useFilesList } from 'react-blockstack'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faDownload } from '@fortawesome/free-solid-svg-icons'
-import {useSave, useFilter, useMatchGlobal, useFiles, useUpload} from './filebrowser'
+import { faDownload, faFile, faUpload } from '@fortawesome/free-solid-svg-icons'
 import {useDropzone} from 'react-dropzone'
+import { isNumber } from 'lodash'
+import {useSave, useFilter, useMatchGlobal, useFiles, useUpload} from './filebrowser'
 
 function ExportFile ({filepath, onCompletion}) {
   const [content] = useFile(filepath)
@@ -22,8 +23,9 @@ function MarkedMatch ({text, match}) {
   const result = text && match && match(text)
   const start = result && result.index
   const end = result && (start + result[0].length)
+  console.log("Match:", start, end, text, result)
   return (
-    start ?
+    isNumber(start) ?
       <>{text.substring(0, start)}
           <mark style={{paddingLeft: 0, paddingRight: 0}}>
           {text.substring(start, end)}
@@ -41,19 +43,22 @@ function FileRow ({item}) {
   const filename = item && item.fileName
   const [saving, setSaving] = useState(false)
   const matching = filename && filter && filter(filename)
+  console.log("Matching:", matching, !!matching)
   return (
-    <tr hidden={!matching} className="d-flex">
+    <tr className={matching ? "d-flex" : "d-none"}>
       <th className="flex-grow-1">
+        <FontAwesomeIcon className="mr-2" icon={faFile}/>
         <MarkedMatch text={filename} match={filter}/>
+        {!matching && "SHOULD BE HIDDEN"}
       </th>
       <td className="download-cell">
         {saving &&
         <ExportFile filepath={filename} onCompletion={() => setSaving(false)}/>}
-        <button className="btn btn-primary"
+        <button className="btn btn-secondary"
                 disabled={saving}
                 title="Download file"
                 onClick={() => setSaving(true)}>
-          <FontAwesomeIcon className="mr-2" icon={faDownload}/>
+          <FontAwesomeIcon className="dropzone-icon mr-2" icon={faDownload}/>
         </button>
       </td>
     </tr>
@@ -103,7 +108,7 @@ export default function Main ({ person }) {
          </div>
          <Dropzone className="mx-5 h-25"
                    handleUpload={handleUpload}>
-
+           <FontAwesomeIcon className="mr-2 text-secondary" icon={faUpload}/>
          </Dropzone>
     </main>
   )

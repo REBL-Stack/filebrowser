@@ -1,5 +1,7 @@
 /* Globals */
 
+html,body{min-height:100vh}
+
 :root  {
   /* https://projects.invisionapp.com/boards/HE2VVROFSGB27 */
   --brand-background: #270F34;
@@ -12,7 +14,25 @@
   --brand-accent: #00D4FF;
 }
 
-html,body{min-height:100vh}
+:root  {
+  --primary: var(--brand-accent);
+}
+
+.btn.btn-primary {
+  color: var(--brand-accent);
+}
+
+.btn-secondary {
+  color: var(--brand-lines);
+}
+
+.navbar .btn {
+  transition: opacity 0.3s;
+}
+
+.navbar .btn:not(:hover) {
+  opacity: 0.3;
+}
 
 #App {
   min-height: 100vh;
@@ -72,7 +92,7 @@ html,body{min-height:100vh}
 /* Dropzone */
 
 .Dropzone {
-  height: 5em;
+  height: 2em;
   margin: auto;
   border: 2px dashed rgb(187, 186, 186);
   border-radius: 5%;
@@ -84,14 +104,21 @@ html,body{min-height:100vh}
   font-size: 16px;
 }
 
+.Dropzone  {
+  font-size: 4em;
+  color: var(--brand-mild);
+  opacity: 0.5;
+  transition: opacity 0.3s;
+}
+
 .Dropzone:hover {
-    border-color: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary);
+  opacity: 1;
 }
 
 .Dropzone.dragging {
   border-color: var(--primary);
-}
-
-.Dropzone .fas {
-  font-size: 100px;
+  color: var(--primary);
+  opacity: 1;
 }
