@@ -1,5 +1,7 @@
 import React, {useRef, useState, useEffect, useCallback} from 'react'
 import { useFile, useFilesList } from 'react-blockstack'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faDownload } from '@fortawesome/free-solid-svg-icons'
 import {useSave, useFilter, useMatchGlobal, useFiles} from './filebrowser'
 import {useDropzone} from 'react-dropzone'
 
@@ -40,15 +42,18 @@ function FileRow ({item}) {
   const [saving, setSaving] = useState(false)
   const matching = filename && filter && filter(filename)
   return (
-    <tr hidden={!matching}>
-      <th><MarkedMatch text={filename} match={filter}/></th>
-      <td>
+    <tr hidden={!matching} className="d-flex">
+      <th className="flex-grow-1">
+        <MarkedMatch text={filename} match={filter}/>
+      </th>
+      <td className="download-cell">
         {saving &&
         <ExportFile filepath={filename} onCompletion={() => setSaving(false)}/>}
         <button className="btn btn-primary"
                 disabled={saving}
+                title="Download file"
                 onClick={() => setSaving(true)}>
-              Download
+          <FontAwesomeIcon className="mr-2" icon={faDownload}/>
         </button>
       </td>
     </tr>
@@ -57,7 +62,7 @@ function FileRow ({item}) {
 
 function Table ({data}) {
   return (
-    <table className="table">
+    <table className="table table-striped table-dark">
       <tbody>
         {data.map( (item) =>
          <FileRow key={item.fileName} item={item}/> )}
@@ -66,11 +71,12 @@ function Table ({data}) {
   )
 }
 
-function Dropzone({children}) {
+function Dropzone({children, className, handleUpload}) {
   const onDrop = useCallback(acceptedFiles => {
     console.log("Uploading...")
+    handleUpload(acceptedFiles)
   }, [])
-  const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
+  const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop, className})
 
   return (
     <div {...getRootProps()}>
@@ -86,11 +92,17 @@ function Dropzone({children}) {
 
 export default function Main ({ person }) {
   const files = useFiles()
+  const handleUpload = () => ()
   const data = files
        .map((name) => ({fileName: name, fileSize: 0}))
   return (
-    <main>
-      <Table data={data}/>
+    <main className="vh-100 bg-dark">
+        {data &&
+         <Table data={data}/>}
+         <Dropzone className="mx-5 h-25"
+                   handleUpload={handleUpload}>
+
+         </Dropzone>
     </main>
   )
 }

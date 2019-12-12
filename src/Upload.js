@@ -1,7 +1,9 @@
 import React, {useRef, useState, useEffect, useCallback} from 'react'
 import {fromEvent} from 'file-selector'
 import { useBlockstack } from 'react-blockstack'
-import {injectFile} from './filebrowser'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faUpload } from '@fortawesome/free-solid-svg-icons'
+import {injectFile, useUpload} from './filebrowser'
 
 export default function Upload ({className, uploadFiles}) {
   const { userData, userSession } = useBlockstack()
@@ -32,6 +34,7 @@ export default function Upload ({className, uploadFiles}) {
     <div className="Upload">
         <input ref={fileUploader} type="file" onChange={ onFileChange } style={{display: 'none'}}/>
         <button className="btn btn-primary" onClick={ uploadFile }>
+          <FontAwesomeIcon className="mr-2" icon={faUpload}/>
           Upload
         </button>
     </div>

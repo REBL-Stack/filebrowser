@@ -14,6 +14,14 @@
 
 html,body{min-height:100vh}
 
+#App {
+  min-height: 100vh;
+}
+
+.inspect {
+  border: thin solid red;
+}
+
 .navbar-dark {
   background-color: var(--brand-dark) !important;
 }
@@ -23,8 +31,9 @@ html,body{min-height:100vh}
 .avatar-section{margin:25px;}
 
 /* Scaffolding */
-.site-wrapper{width:100%;height:90% !important;min-height:90vh !important;}
+/*.site-wrapper{width:100%;height:90% !important;min-height:90vh !important;}
 .site-wrapper-inner{display:flex;flex-direction:column;justify-content:center;margin-right:auto;margin-left:auto;width:100%;height:90%;}
+*/
 
 .panel-landing {
   max-width: 40em;
@@ -33,7 +42,7 @@ html,body{min-height:100vh}
 
 .navbar .logo {
   max-height: 32px;
-  border-radius: 50%;
+  border-radius: 5px;
 }
 
 /* Search */

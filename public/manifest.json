@@ -3,7 +3,7 @@
   "description": "Browser for the online files of apps",
   "icons": [
     {
-    "src": "app_icon.svg",
+    "src": "https://filebrowser.rebl.run/media/app_icon.svg",
     "type": "image/svg"
     }
   ],
