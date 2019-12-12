@@ -1,8 +1,9 @@
-import React, {useState, useEffect, useCallback, useRef} from 'react'
+import {useState, useEffect, useCallback, useRef} from 'react'
 import { useBlockstack, useFilesList} from 'react-blockstack'
-import FileSaver, { saveAs } from 'file-saver'
+import { saveAs } from 'file-saver'
 import {fromEvent} from 'file-selector'
 import { Atom, swap, useAtom } from "@dbeining/react-atom"
+import { without } from 'lodash'
 
 const matchAtom = Atom.of({match: ""})
 
@@ -14,8 +15,15 @@ export function useMatchGlobal() {
 
 const uploadAtom = Atom.of([])
 
-export function injectFile (file) {
+function insertFile (file) {
   swap(uploadAtom, files => [file, ...files])
+}
+
+function removeFile (file) {
+  swap(uploadAtom, files => {
+    console.log("Without:", files, file, without(files, file))
+    return (without(files, file))
+  })
 }
 
 export function useFiles() {
@@ -69,6 +77,20 @@ export function useSave(content, filepath, onCompletion) {
   return {progress: progress, saved: progress === 100}
 }
 
+export function useTrash (filepath) {
+  const { userSession } = useBlockstack()
+  const [state, setState] = useState(true)
+  const action = useCallback(() => {
+    userSession.deleteFile(filepath)
+    .then(() => {
+      setState(null)
+      removeFile(filepath)
+    })
+    .catch(err => console.error("Failed to delete file:", err))
+  }, [userSession, filepath])
+  return [state, action]
+}
+
 export function useUpload () {
   const { userSession } = useBlockstack()
   const handleUpload = (files) => {
@@ -79,7 +101,7 @@ export function useUpload () {
           reader.onload = () => {
             const content = reader.result
             userSession.putFile(pathname, content)
-            .then(() => injectFile(pathname))
+            .then(() => insertFile(pathname))
             .catch(err => console.warn("Failed to upload file:", err))
           }
         reader.readAsArrayBuffer(file)
