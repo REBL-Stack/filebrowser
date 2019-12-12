@@ -39,6 +39,9 @@ html,body{min-height:100vh}
   color: var(--gray);
 }
 
+.text-primary {
+}
+
 .navbar .btn {
   transition: opacity 0.3s;
 }
@@ -80,22 +83,27 @@ html,body{min-height:100vh}
 
 /* Search */
 
-.Search input.form-control {
+.Search {
   background-color: #DDDDDD44;
   border-radius: 1.5em;
-  opacity: 0.5;
   padding-left: 1em;
   padding-right: 1em;
+  opacity: 0.6;
+}
+
+.Search:hover {
+  opacity: 1;
+
 }
 
  .Search input.form-control::placeholder {
    color: var(--primary);
-   opacity: 0.9;
+   opacity: 0.7;
    line-height: 2em;
  }
 
 .Search .form-control:hover {
-  opacity: 0.7;
+  opacity: 0.8;
 }
 
 .Search .form-control:focus {
