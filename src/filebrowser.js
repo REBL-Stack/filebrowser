@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback} from 'react'
+import React, {useState, useEffect, useCallback, useRef} from 'react'
 import { useBlockstack, useFilesList} from 'react-blockstack'
 import FileSaver, { saveAs } from 'file-saver'
 import {fromEvent} from 'file-selector'
@@ -67,4 +67,31 @@ export function useSave(content, filepath, onCompletion) {
       onCompletion()}
     }, [progress, onCompletion])
   return {progress: progress, saved: progress === 100}
+}
+
+export function useUpload () {
+  const { userSession } = useBlockstack()
+  const upload = (files) => {
+      files.forEach( (file) => {
+          const name = file.name
+          const pathname = name
+          const reader = new FileReader()
+          reader.onload = () => {
+            const content = reader.result
+            userSession.putFile(pathname, content)
+            .then(() => injectFile(pathname))
+            .catch(err => console.warn("Failed to upload file:", err))
+          }
+        reader.readAsArrayBuffer(file)
+        }
+    )}
+  const onFileChange = (evt) => {
+        fromEvent(evt).then(upload)
+      }
+  const fileUploader = useRef(null)
+  const inputProps = {ref: fileUploader, type:"file", onChange: onFileChange, style:{display: 'none'}}
+  const uploadAction = () => {
+      fileUploader.current.click()
+    }
+  return ({uploadAction, inputProps})
 }

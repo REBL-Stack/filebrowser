@@ -79,7 +79,7 @@ function Dropzone({children, className, handleUpload}) {
   const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop, className})
 
   return (
-    <div {...getRootProps()}>
+    <div {...getRootProps()} className="Dropzone">
       <input {...getInputProps()} />
       {
         (isDragActive ) &&
@@ -92,7 +92,7 @@ function Dropzone({children, className, handleUpload}) {
 
 export default function Main ({ person }) {
   const files = useFiles()
-  const handleUpload = () => ()
+  const handleUpload = () => {}
   const data = files
        .map((name) => ({fileName: name, fileSize: 0}))
   return (
