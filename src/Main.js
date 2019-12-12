@@ -31,7 +31,7 @@ export default function Main ({ person }) {
   const data = files
        .map((name) => ({fileName: name, fileSize: 0}))
   return (
-    <main className="vh-100">
+    <main className="vh-100 m-auto" style={{maxWidth: "50rem"}}>
         <div className="h-50">
           {data &&
            <Browser data={data}/>}

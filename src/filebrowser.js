@@ -16,7 +16,7 @@ export function useMatchGlobal() {
 const uploadAtom = Atom.of([])
 
 function insertFile (file) {
-  swap(uploadAtom, files => union([file], files))
+  swap(uploadAtom, files => union(files, [file]))
 }
 
 function removeFile (file) {
