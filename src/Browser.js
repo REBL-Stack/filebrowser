@@ -46,25 +46,25 @@ function FileRow ({item}) {
   const [exists, doTrash] = useTrash(filename)
   return (
     <tr className={matching ? "d-flex" : "d-none"}>
-      <th className="flex-grow-1">
+      <th className="flex-grow-1 align-bottom">
         <FontAwesomeIcon className="mr-2" icon={faFile}/>
         <MarkedMatch text={filename} match={filter}/>
         {!matching && "HIDDEN"}
       </th>
-      <td className="action-cell">
+      <td className="action-cell align-middle py-1">
         {saving &&
         <ExportFile filepath={filename} onCompletion={() => setSaving(false)}/>}
-        <button className="btn btn-secondary"
+        <button className="btn btn-secondary my-0"
                 disabled={saving}
                 title="Download file"
                 onClick={() => setSaving(true)}>
-          <FontAwesomeIcon className="dropzone-icon mr-2" icon={faDownload}/>
+          <FontAwesomeIcon className="dropzone-icon" icon={faDownload}/>
         </button>
-        <button className="btn btn-secondary"
+        <button className="btn btn-warning my-0"
                 disabled={saving}
                 title="Delete file"
                 onClick={() => doTrash()}>
-          <FontAwesomeIcon className="dropzone-icon mr-2" icon={faTrash}/>
+          <FontAwesomeIcon className="dropzone-icon" icon={faTrash}/>
         </button>
       </td>
     </tr>
@@ -73,7 +73,7 @@ function FileRow ({item}) {
 
 function Table ({data}) {
   return (
-    <table className="table table-striped">
+    <table className="table border-bottom-dark mt-2">
       <tbody>
         {data.map( (item) =>
          <FileRow key={item.fileName} item={item}/> )}

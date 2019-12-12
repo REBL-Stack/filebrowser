@@ -3,7 +3,7 @@ import { useBlockstack, useFilesList} from 'react-blockstack'
 import { saveAs } from 'file-saver'
 import {fromEvent} from 'file-selector'
 import { Atom, swap, useAtom } from "@dbeining/react-atom"
-import { without } from 'lodash'
+import { without, union } from 'lodash'
 
 const matchAtom = Atom.of({match: ""})
 
@@ -16,12 +16,11 @@ export function useMatchGlobal() {
 const uploadAtom = Atom.of([])
 
 function insertFile (file) {
-  swap(uploadAtom, files => [file, ...files])
+  swap(uploadAtom, files => union([file], files))
 }
 
 function removeFile (file) {
   swap(uploadAtom, files => {
-    console.log("Without:", files, file, without(files, file))
     return (without(files, file))
   })
 }

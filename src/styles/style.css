@@ -22,8 +22,21 @@ html,body{min-height:100vh}
   color: var(--brand-accent);
 }
 
+.btn.btn-primary:hover {
+  color: var(--brand-accent);
+}
+
+
 .btn-secondary {
   color: var(--brand-lines);
+}
+
+.btn.btn-secondary:hover {
+  color: var(--brand-accent);
+}
+
+.btn.btn-warning:not(:hover) {
+  color: var(--gray);
 }
 
 .navbar .btn {
