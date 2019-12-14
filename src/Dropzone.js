@@ -1,17 +1,16 @@
 import React, {useCallback} from 'react'
 import {useDropzone} from 'react-dropzone'
 
-export default function Dropzone({children, className, handleUpload, options}) {
+export default function Dropzone({children, className, handleUpload, options, directories}) {
   const onDrop = useCallback(acceptedFiles => {
     console.log("Uploading...", acceptedFiles)
     handleUpload(acceptedFiles)
-  }, [])
-  const inputAttr = {webkitdirectory: "", mozdirectory: "", directory: ""}
-  const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop, className, ...options})
-
+  }, [handleUpload])
+  const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop, ...options})
+  const directoriesProps = directories  && {webkitdirectory: "", mozdirectory: "", directory: ""}
   return (
-    <div {...getRootProps({className: "Dropzone mx-5"})}>
-      <input {...getInputProps(inputAttr)}/>
+    <div {...getRootProps({className: ["Dropzone", isDragActive && "dragging", className].join(" ")})}>
+      <input {...getInputProps({...directoriesProps})}/>
       { children ||
         <p>Drag 'n' drop some files here, or click to select files</p>}
     </div>

@@ -18,9 +18,10 @@ export default function Main ({ person }) {
           {data &&
            <Browser data={data}/>}
          </div>
-         <Dropzone className="mx-5 h-25"
+         <Dropzone className="Dropzone mx-5 h-25"
                    handleUpload={handleUpload}
-                   options={{multiple: true, maxSize: gaiaMaxFileSize}}>
+                   options={{multiple: true, maxSize: gaiaMaxFileSize}}
+                   directories={true}>
            <FontAwesomeIcon className="mr-2 text-secondary" icon={faUpload}/>
          </Dropzone>
     </main>
