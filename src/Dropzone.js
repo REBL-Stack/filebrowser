@@ -6,12 +6,12 @@ export default function Dropzone({children, className, handleUpload, options}) {
     console.log("Uploading...", acceptedFiles)
     handleUpload(acceptedFiles)
   }, [])
+  const inputAttr = {webkitdirectory: "", mozdirectory: "", directory: ""}
   const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop, className, ...options})
 
   return (
-    <div {...getRootProps({className: "Dropzone mx-5",
-             webkitdirectory: "", mozdirectory: "", directory: ""})}>
-      <input {...getInputProps()} />
+    <div {...getRootProps({className: "Dropzone mx-5"})}>
+      <input {...getInputProps(inputAttr)}/>
       { children ||
         <p>Drag 'n' drop some files here, or click to select files</p>}
     </div>
