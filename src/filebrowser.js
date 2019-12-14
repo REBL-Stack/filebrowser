@@ -4,7 +4,7 @@ import { saveAs } from 'file-saver'
 import {fromEvent} from 'file-selector'
 import { Atom, swap, useAtom } from "@dbeining/react-atom"
 import { without, union, nth, concat, slice } from 'lodash'
-import fp, { extend, sortedIndex, isNull } from 'lodash/fp'
+import fp, { extend, sortedIndex, isNull, trimStart } from 'lodash/fp'
 
 // PR is on way in lodash after 4.17
 const insert = (arr, item, index) => concat(slice(arr, 0, index), item, slice(arr, index))
@@ -103,6 +103,8 @@ export function useTrash (filepath) {
   return [state, action]
 }
 
+const canonicalFilePath = (str) => str.replace(/^\//, '');
+
 export function useUpload () {
   const { userSession } = useBlockstack()
   const [progress, setProgress] = useState(null)
@@ -110,8 +112,7 @@ export function useUpload () {
       setProgress(0)
       files.forEach( (file, ix) => {
         console.log("UPLOAD:", file)
-        const name = file.path || file.name
-        const pathname = name
+        const pathname = file.path ? canonicalFilePath(file.path) : file.name
         const reader = new FileReader()
         reader.onload = () => {
           const content = reader.result
