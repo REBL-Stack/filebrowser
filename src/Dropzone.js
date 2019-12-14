@@ -9,7 +9,8 @@ export default function Dropzone({children, className, handleUpload, options}) {
   const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop, className, ...options})
 
   return (
-    <div {...getRootProps()} className="Dropzone mx-5">
+    <div {...getRootProps({className: "Dropzone mx-5",
+             webkitdirectory: "", mozdirectory: "", directory: ""})}>
       <input {...getInputProps()} />
       { children ||
         <p>Drag 'n' drop some files here, or click to select files</p>}

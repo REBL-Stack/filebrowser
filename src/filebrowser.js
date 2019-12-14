@@ -110,7 +110,9 @@ export function useUpload () {
         fromEvent(evt).then(handleUpload)
       }
   const fileUploader = useRef(null)
-  const inputProps = {ref: fileUploader, type:"file", onChange: onFileChange, style:{display: 'none'}}
+  const inputProps = {ref: fileUploader, type:"file", onChange: onFileChange,
+                      style:{display: 'none'},
+                      webkitdirectory: "", mozdirectory: "", directory: ""}
   const uploadAction = () => {
       fileUploader.current.click()
     }
