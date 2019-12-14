@@ -21,7 +21,7 @@ export default function Main ({ person }) {
          <Dropzone className="Dropzone mx-5 h-25"
                    handleUpload={handleUpload}
                    options={{multiple: true, maxSize: gaiaMaxFileSize}}
-                   directories={true}>
+                   directories={false}>
            <FontAwesomeIcon className="mr-2 text-secondary" icon={faUpload}/>
          </Dropzone>
     </main>
