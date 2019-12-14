@@ -71,11 +71,11 @@ function FileRow ({item}) {
   )
 }
 
-function Table ({data}) {
+function Table ({files}) {
   return (
     <table className="table border-bottom-dark mt-2">
       <tbody>
-        {data.map( (item) =>
+        {files.map( (item) =>
          <FileRow key={item.fileName} item={item}/> )}
       </tbody>
     </table>
