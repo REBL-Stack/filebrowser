@@ -13,23 +13,23 @@ export function useMatchGlobal() {
   return [match, setMatch]
 }
 
-const uploadAtom = Atom.of([])
+const filesAtom = Atom.of([])
+
+export function useFiles() {
+  const files = useAtom(filesAtom)
+  const [filesList] = useFilesList()
+  useEffect(() => {
+    swap(filesAtom, () => filesList)
+  }, [filesList])
+  return (files)
+}
 
 function insertFile (file) {
-  swap(uploadAtom, files => union(files, [file]))
+  swap(filesAtom, (files) => union(files, [file]))
 }
 
 function removeFile (file) {
-  swap(uploadAtom, files => {
-    return (without(files, file))
-  })
-}
-
-export function useFiles() {
-  console.log("Load files")
-  const uploaded = useAtom(uploadAtom)
-  const [files] = useFilesList()
-  return ([...uploaded, ...files])
+  swap(filesAtom, (files) => without(files, file))
 }
 
 export function useBrowser () {
