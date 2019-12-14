@@ -1,29 +1,9 @@
-import React, {useRef, useState, useEffect, useCallback} from 'react'
-import { useFile, useFilesList } from 'react-blockstack'
+import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faDownload, faFile, faUpload } from '@fortawesome/free-solid-svg-icons'
-import {useDropzone} from 'react-dropzone'
+import { faUpload } from '@fortawesome/free-solid-svg-icons'
 import {useUpload, useFiles } from './filebrowser'
 import Browser from './Browser'
-
-function Dropzone({children, className, handleUpload}) {
-  const onDrop = useCallback(acceptedFiles => {
-    console.log("Uploading...")
-    handleUpload(acceptedFiles)
-  }, [])
-  const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop, className})
-
-  return (
-    <div {...getRootProps()} className="Dropzone mx-5">
-      <input {...getInputProps()} />
-      {
-        (isDragActive ) &&
-          <p>Drop the files here ...</p>}
-      { children ||
-        <p>Drag 'n' drop some files here, or click to select files</p>}
-    </div>
-  )
-}
+import Dropzone from './Dropzone'
 
 export default function Main ({ person }) {
   const files = useFiles()

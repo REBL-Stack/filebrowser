@@ -12,7 +12,7 @@ export default function Landing (props) {
           your apps. You can check out its functionality by signing in below
           and upload, browse, and download files.</p>
         <p>For use during app development, download
-           the <a href="https://github.com/REBL-Stack/" target="_blank">repository</a> and
+           the <a href="https://github.com/REBL-Stack/" target="_blank" rel="noopener noreferrer">repository</a> and
            run it with <code>npm start</code> on the same localhost
            port as your app. Sign in to browse the online files of your development app
            that previously was accessed on the same port.
