@@ -94,25 +94,26 @@ export function useUpload () {
   const { userSession } = useBlockstack()
   const handleUpload = (files) => {
       files.forEach( (file) => {
-          const name = file.name
-          const pathname = name
-          const reader = new FileReader()
-          reader.onload = () => {
-            const content = reader.result
-            userSession.putFile(pathname, content)
-            .then(() => insertFile(pathname))
-            .catch(err => console.warn("Failed to upload file:", err))
-          }
-        reader.readAsArrayBuffer(file)
+        console.log("UPLOAD:", file)
+        const name = file.path || file.name
+        const pathname = name
+        const reader = new FileReader()
+        reader.onload = () => {
+          const content = reader.result
+          userSession.putFile(pathname, content)
+          .then(() => insertFile(pathname))
+          .catch(err => console.warn("Failed to upload file:", err))
         }
+      reader.readAsArrayBuffer(file)
+      }
     )}
   const onFileChange = (evt) => {
         fromEvent(evt).then(handleUpload)
       }
   const fileUploader = useRef(null)
   const inputProps = {ref: fileUploader, type:"file", onChange: onFileChange,
-                      style:{display: 'none'},
-                      webkitdirectory: "", mozdirectory: "", directory: ""}
+                      style: {display: 'none'}, multiple: true, accept: "*/*",
+                      webkitdirectory: true, mozdirectory: true, directory: true}
   const uploadAction = () => {
       fileUploader.current.click()
     }
