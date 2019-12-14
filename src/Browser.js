@@ -23,7 +23,7 @@ function MarkedMatch ({text, match}) {
   const result = text && match && match(text)
   const start = result && result.index
   const end = result && (start + result[0].length)
-  console.log("Match:", start, end, text, result)
+  // console.log("Match:", start, end, text, result)
   return (
     isNumber(start) ?
       <>{text.substring(0, start)}
