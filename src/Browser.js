@@ -1,9 +1,10 @@
-import React, {useState} from 'react'
+import React, {useState, useCallback} from 'react'
 import { useFile } from 'react-blockstack'
-import { isNumber } from 'lodash'
+import { trimEnd } from 'lodash'
+import { isNumber, isEmpty, isNull, split, compose, partial } from 'lodash/fp'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faDownload, faFile, faTrash } from '@fortawesome/free-solid-svg-icons'
-import {useSave, useFilter, useMatchGlobal, useTrash } from './filebrowser'
+import { faDownload, faFile, faFolder, faTrash } from '@fortawesome/free-solid-svg-icons'
+import {useSave, useFilter, useMatchGlobal, useTrash, useLocal, useBrowser, useItem } from './filebrowser'
 
 
 function ExportFile ({filepath, onCompletion}) {
@@ -37,45 +38,63 @@ function MarkedMatch ({text, match}) {
   )
 }
 
+function DownloadAction ({saving, setSaving}) {
+  return (
+    <button className="btn btn-secondary my-0"
+            disabled={saving}
+            title="Download file"
+            onClick={() => setSaving(true)}>
+      <FontAwesomeIcon className="dropzone-icon" icon={faDownload}/>
+    </button>
+  )
+}
+
 function FileRow ({item}) {
   const [match] = useMatchGlobal()
   const [filter] = useFilter(match)
-  const filename = item && item.fileName
+  const {isDir, fileName, localName, root} = item
+  const {openAction} = useItem(item)
   const [saving, setSaving] = useState(false)
-  const matching = filename && filter && filter(filename)
-  const [exists, doTrash] = useTrash(filename)
+  const matching = fileName && filter && filter(fileName)
+  const [exists, doTrash] = useTrash(item)
+  console.log("FileRow:", matching, item)
   return (
-    <tr className={matching ? "d-flex" : "d-none"}>
+    <tr className={[!isNull(matching) ? "d-flex" : "d-none",
+                    !(exists === true) ? "text-muted" : "text-dark"].join(" ")}>
       <th className="flex-grow-1 align-bottom">
-        <FontAwesomeIcon className="mr-2" icon={faFile}/>
-        <MarkedMatch text={filename} match={filter}/>
-        {!matching && "HIDDEN"}
+        <a name={localName} onClick={openAction || null}>
+          <FontAwesomeIcon className="mr-2" icon={isDir ? faFolder : faFile}/>
+          <MarkedMatch text={localName} match={filter}/>
+        </a>
       </th>
       <td className="action-cell align-middle py-1">
         {saving &&
-        <ExportFile filepath={filename} onCompletion={() => setSaving(false)}/>}
-        <button className="btn btn-secondary my-0"
-                disabled={saving}
-                title="Download file"
-                onClick={() => setSaving(true)}>
-          <FontAwesomeIcon className="dropzone-icon" icon={faDownload}/>
-        </button>
+        <ExportFile filepath={fileName} onCompletion={() => setSaving(false)}/>}
+        {!isDir &&
+          <DownloadAction {...{setSaving, saving}}/>}
         <button className="btn btn-warning my-0"
                 disabled={saving}
                 title="Delete file"
                 onClick={() => doTrash()}>
-          <FontAwesomeIcon className="dropzone-icon" icon={faTrash}/>
+          <FontAwesomeIcon icon={faTrash}/>
         </button>
       </td>
     </tr>
   )
 }
 
-function Table ({files}) {
+function Table ({files, root}) {
+  // Files is a sorted array
+  const items = useLocal(files, root)
+  //console.log("BROWSE:", files, items)
   return (
     <table className="table border-bottom-dark mt-2">
       <tbody>
-        {files.map( (item) =>
+        {isEmpty(items) &&
+          <div className="alert alert-dark">
+            Empty...
+          </div>}
+        {items && items.map( (item) =>
          <FileRow key={item.fileName} item={item}/> )}
       </tbody>
     </table>

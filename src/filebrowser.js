@@ -1,10 +1,14 @@
+// @flow
 import {useState, useEffect, useCallback, useRef} from 'react'
 import { useBlockstack, useFilesList} from 'react-blockstack'
 import { saveAs } from 'file-saver'
 import {fromEvent} from 'file-selector'
-import { Atom, swap, useAtom } from "@dbeining/react-atom"
+import { Atom, swap, useAtom, deref } from "@dbeining/react-atom"
 import { without, union, nth, concat, slice } from 'lodash'
-import fp, { extend, sortedIndex, isNull, trimStart } from 'lodash/fp'
+import fp, { extend, sortedIndex, isNull, trimStart, startsWith, isNumber, compose, sortedUniqBy,
+             partial, filter, flow, isEmpty, merge, split } from 'lodash/fp'
+
+
 
 // PR is on way in lodash after 4.17
 const insert = (arr, item, index) => concat(slice(arr, 0, index), item, slice(arr, index))
@@ -28,6 +32,7 @@ export function useFiles() {
   }, [filesList])
   useEffect(() => {
     // TODO: Reuse existing file objects
+    // console.log("FILES:", files, filesList)
     setState(files.map((name) => ({fileName: name, fileSize: 0})))
   },[files])
   return [state, !isNull(filecount)]
@@ -45,8 +50,27 @@ function removeFile (file) {
   swap(filesAtom, (files) => without(files, file))
 }
 
-export function useBrowser () {
+const trailAtom = Atom.of({trail: []})
 
+export function useBrowser () {
+  const {trail} = useAtom(trailAtom)
+  const root = (isEmpty(trail) ? [] : [...trail, ""]).join("/")
+  return {trail, setTrail: (trail) => swap(trailAtom, (obj) => ({...obj, trail: trail})),
+          root}
+}
+
+const te = str => str.replace(/\/$/, '')
+const toTrail = compose(split('/'), te)
+
+export function useItem (item) {
+  const {isDir, fileName, localName, root} = item
+  const {setTrail} = useBrowser()
+  const action = useCallback(isDir && (() => {
+    const trail = toTrail(root + localName)
+    console.log("TRAIL:", trail)
+    setTrail(trail)
+  }), [root, localName, isDir, setTrail])
+  return {openAction: action}
 }
 
 function defaultFilter (type, match) {
@@ -55,7 +79,7 @@ function defaultFilter (type, match) {
          }[type])
 }
 
-export function useFilter (match) {
+export function useFilter (match: string) {
   const [reg, setReg] = useState()
   useEffect( () => {
      try {
@@ -89,30 +113,47 @@ export function useSave(content, filepath, onCompletion) {
   return {progress: progress, saved: progress === 100}
 }
 
-export function useTrash (filepath) {
+function trashItem ({userSession, item, onComplete}) {
+  const {isDir, fileName, localName, root} = item
+  const deleteFile = (fileName) => (
+    userSession.deleteFile(fileName)
+    .then(() => removeFile(fileName))
+    .catch(err => console.error("Failed to delete file:", err)))
+  if (isDir) {
+    const isSubFile = (filepath) => filepath.startsWith(root + localName)
+    const files = deref(filesAtom).filter(isSubFile)   // keep children in item instead??
+    console.log("To delete:", files)
+    const deleted = files.map(deleteFile)
+    Promise.all(deleted).then(() => onComplete())
+  } else {
+    deleteFile(fileName)
+    .finally(() => onComplete())
+  }
+}
+
+export function useTrash (item) {
   const { userSession } = useBlockstack()
   const [state, setState] = useState(true)
   const action = useCallback(() => {
-    userSession.deleteFile(filepath)
-    .then(() => {
-      setState(null)
-      removeFile(filepath)
-    })
-    .catch(err => console.error("Failed to delete file:", err))
-  }, [userSession, filepath])
+    setState(false)
+    trashItem({userSession, item, onComplete: () => setState(null)})
+  }, [userSession, item])
   return [state, action]
 }
 
 const canonicalFilePath = (str) => str.replace(/^\//, '');
 
-export function useUpload () {
+export function useUpload (props) {
+  const {allowFolders} = props || {}
   const { userSession } = useBlockstack()
   const [progress, setProgress] = useState(null)
+  const {root} = useBrowser() // could be argument
   const handleUpload = (files) => {
       setProgress(0)
       files.forEach( (file, ix) => {
         console.log("UPLOAD:", file)
-        const pathname = file.path ? canonicalFilePath(file.path) : file.name
+        const localpath = file.path ? canonicalFilePath(file.path) : file.name
+        const pathname = root + localpath
         const reader = new FileReader()
         reader.onload = () => {
           const content = reader.result
@@ -129,11 +170,35 @@ export function useUpload () {
         fromEvent(evt).then(handleUpload)
       }
   const fileUploader = useRef(null)
-  const inputProps = {ref: fileUploader, type:"file", onChange: onFileChange,
-                      style: {display: 'none'}, multiple: true, accept: "*/*",
-                      webkitdirectory: "", mozdirectory: "", directory: ""}
+  const inputProps = merge({ref: fileUploader, type:"file", onChange: onFileChange,
+                            style: {display: 'none'}, multiple: true, accept: "*/*"}, {})
+                          //(allowFolders ? {webkitdirectory: "", mozdirectory: "", directory: ""} : {})
   const uploadAction = () => {
       fileUploader.current.click()
     }
   return ({uploadAction, inputProps, handleUpload, progress})
+}
+
+const localNameFn = (start, separator) =>
+  (path) => ((ix) => path.substring(start, (ix === -1) ? path.length : ix+1))
+            (path.indexOf(separator, start+1))
+
+export function useLocal (files, root) {
+  const [state, setState] = useState()
+  useEffect(() => {
+    const getLocalName = localNameFn(root.length, '/')
+    const isIncluded = compose(startsWith(root), file => file.fileName)
+    const uniqForDir = sortedUniqBy(compose(getLocalName, file => file.fileName))
+    const makeLocalItem = (item) => {
+      const localName = getLocalName(item.fileName)
+      const isDir = localName && localName.endsWith('/')
+      return ({...item, localName, root, isDir})
+    }
+    //console.log("UNIQ1:", root, localName(root.length, '/')("MVP/foo"))  // expect "foo"
+    //console.log("UNIQ2:", root, localName(root.length, '/')("MVP/foo/bar")) // expect "foo/"
+    const items = uniqForDir(files.filter(isIncluded))
+                 .map(makeLocalItem)
+    setState(items)
+  }, [files, root])
+  return state
 }
