@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUpload, faSitemap, faHome } from '@fortawesome/free-solid-svg-icons'
 import { Progress, Breadcrumb, BreadcrumbItem } from 'reactstrap'
 import { isNull, isEmpty } from 'lodash/fp'
-import {useUpload, useFiles, useBrowser } from './filebrowser'
+import {useUpload, useFiles, useBrowser, useLocal } from './filebrowser'
 import Browser from './Browser'
 import Dropzone from './Dropzone'
 
@@ -37,17 +37,19 @@ export default function Main ({ person }) {
   const {handleUpload, progress} = useUpload()
   // const [trail, setTrail] = useState(["MVP"])
   const {trail, setTrail, root} = useBrowser()
+  const items = useLocal(files, root)
+  console.log("ITEMS:", items)
   return (
     <main>
       <Progress hidden={complete && isNull(progress)} animated value={progress ? progress * 100 : 100}/>
       <div className="container-fluid m-auto" style={{maxWidth: "50rem"}}>
         <BrowserTrail title={<FontAwesomeIcon icon={faHome} style={(trail.length == 0) ? {visibility: "none"} : null }/> }
                       trail={trail} onChange={setTrail}/>
-        <div className="" style={{minHeight: "50vh"}}>
-          {files &&
-           <Browser files={files} root={root}/>}
-         </div>
-         <Dropzone className="Dropzone mx-5 h-25"
+        {!isEmpty(items) &&
+          <div className="" style={{minHeight: "50vh"}}>
+            <Browser items={items}/>
+          </div>}
+         <Dropzone className={["Dropzone mx-5", isEmpty(items) ? "h-75" : "h-25"].join(" ")}
                    handleUpload={handleUpload}
                    options={{multiple: true, maxSize: gaiaMaxFileSize}}
                    pickDirectory={false}>

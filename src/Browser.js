@@ -6,7 +6,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faDownload, faFile, faFolder, faTrash } from '@fortawesome/free-solid-svg-icons'
 import {useSave, useFilter, useMatchGlobal, useTrash, useLocal, useBrowser, useItem } from './filebrowser'
 
-
 function ExportFile ({filepath, onCompletion}) {
   const [content] = useFile(filepath)
   const {progress} = useSave(content, filepath, onCompletion)
@@ -83,9 +82,8 @@ function FileRow ({item}) {
   )
 }
 
-function Table ({files, root}) {
+function Table ({items}) {
   // Files is a sorted array
-  const items = useLocal(files, root)
   //console.log("BROWSE:", files, items)
   return (
     <table className="table border-bottom-dark mt-2">

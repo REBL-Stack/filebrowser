@@ -54,7 +54,11 @@ const trailAtom = Atom.of({trail: []})
 
 export function useBrowser () {
   const {trail} = useAtom(trailAtom)
-  const root = (isEmpty(trail) ? [] : [...trail, ""]).join("/")
+  var root = (isEmpty(trail) ? [] : [...trail, ""]).join("/")
+  if (root === "/"){
+    console.warn("Invalid root:", root, trail)
+    root = ""
+  }
   return {trail, setTrail: (trail) => swap(trailAtom, (obj) => ({...obj, trail: trail})),
           root}
 }
@@ -186,19 +190,23 @@ const localNameFn = (start, separator) =>
 export function useLocal (files, root) {
   const [state, setState] = useState()
   useEffect(() => {
-    const getLocalName = localNameFn(root.length, '/')
-    const isIncluded = compose(startsWith(root), file => file.fileName)
-    const uniqForDir = sortedUniqBy(compose(getLocalName, file => file.fileName))
-    const makeLocalItem = (item) => {
-      const localName = getLocalName(item.fileName)
-      const isDir = localName && localName.endsWith('/')
-      return ({...item, localName, root, isDir})
+    if (files) {
+      const getLocalName = localNameFn(root.length, '/')
+      const isIncluded = compose(startsWith(root), file => file.fileName)
+      const uniqForDir = sortedUniqBy(compose(getLocalName, file => file.fileName))
+      const makeLocalItem = (item) => {
+        const localName = getLocalName(item.fileName)
+        const isDir = localName && localName.endsWith('/')
+        return ({...item, localName, root, isDir})
+      }
+      //console.log("UNIQ1:", root, localName(root.length, '/')("MVP/foo"))  // expect "foo"
+      //console.log("UNIQ2:", root, localName(root.length, '/')("MVP/foo/bar")) // expect "foo/"
+      const items = uniqForDir(files.filter(isIncluded))
+                   .map(makeLocalItem)
+      setState(items)
+    } else {
+      setState(null)
     }
-    //console.log("UNIQ1:", root, localName(root.length, '/')("MVP/foo"))  // expect "foo"
-    //console.log("UNIQ2:", root, localName(root.length, '/')("MVP/foo/bar")) // expect "foo/"
-    const items = uniqForDir(files.filter(isIncluded))
-                 .map(makeLocalItem)
-    setState(items)
   }, [files, root])
   return state
 }

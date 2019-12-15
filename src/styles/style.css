@@ -113,7 +113,7 @@ html,body{min-height:100vh}
 /* Dropzone */
 
 .Dropzone {
-  height: 2em;
+  min-height: 2em;
   margin: auto;
   border: 2px dashed rgb(187, 186, 186);
   border-radius: 5%;
