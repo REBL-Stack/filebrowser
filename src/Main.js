@@ -22,9 +22,9 @@ export default function Main ({ person }) {
     </div>
     <div className="w-100 d-flex flex-column">
       <div className="w-100 navbar-fixed">
-        <Progress hidden={complete && isNull(progress)} animated value={progress ? progress * 100 : 100}/>
         <BrowserTrail title={<FontAwesomeIcon icon={faHome} style={isEmpty(trail) ? {visibility: "hidden"} : null }/> }
                       trail={trail} onChange={setTrail}/>
+        <Progress hidden={complete && isNull(progress)} animated value={progress ? progress * 100 : 100}/>
       </div>
       <div className="w-100 overflow-auto grow-1 d-flex flex-column">
         <div className="pb-5">
