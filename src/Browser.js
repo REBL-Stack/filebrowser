@@ -4,7 +4,7 @@ import { trimEnd } from 'lodash'
 import { isNumber, isEmpty, isNull, split, compose, partial } from 'lodash/fp'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faDownload, faFile, faFolder, faTrash } from '@fortawesome/free-solid-svg-icons'
-import {useSave, useFilter, useMatchGlobal, useTrash, useLocal, useBrowser, useItem } from './filebrowser'
+import {useSave, useFilter, useMatchGlobal, useTrash, useLocal, useBrowser, useItem, useSelected } from './filebrowser'
 
 import './Browser.css'
 
@@ -58,13 +58,16 @@ function FileRow ({item}) {
   const [saving, setSaving] = useState(false)
   const matching = fileName && filter && filter(fileName)
   const [exists, doTrash] = useTrash(item)
+  const [selected, toggleSelected] = useSelected(fileName)
   console.log("FileRow:", matching, item)
   return (
     <tr className={[!isNull(matching) ? "d-flex" : "d-none",
-                    !(exists === true) ? "text-muted" : "text-dark"].join(" ")}>
+                    !(exists === true) ? "text-muted" : "text-dark",
+                    selected ? "table-active" : ""].join(" ")}
+        onClick={toggleSelected}>
       <th className="flex-grow-1 align-bottom">
         <a name={localName} href={openAction ? "#" : null}
-           onClick={openAction || null}>
+           onClick={openAction ? (e) => {openAction(); e.stopPropagation()} : null}>
           <FontAwesomeIcon className="mr-2" icon={isDir ? faFolder : faFile}/>
           <MarkedMatch text={localName} match={filter}/>
         </a>
@@ -88,7 +91,7 @@ function FileRow ({item}) {
 export default function Browser ({items}) {
   // Items is a sorted array
   return (
-    <table className="Browser table border-bottom-dark mt-2">
+    <table className="Browser table table-hover border-bottom-dark mt-2">
       <tbody>
         {isEmpty(items) &&
           <div className="alert alert-dark">

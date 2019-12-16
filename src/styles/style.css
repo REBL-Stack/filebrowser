@@ -128,12 +128,10 @@ html, body {
 /* Dropzone */
 
 .Dropzone {
-  min-height: 2em;
-  margin: auto;
   border: 2px dashed rgb(187, 186, 186);
   border-radius: 5%;
   padding: 1em;
-  /*display: flex;*/
+  display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
@@ -141,9 +139,10 @@ html, body {
 }
 
 .Dropzone  {
+  margin-top: 1em;
   font-size: 4em;
   color: var(--brand-mild);
-  opacity: 0.5;
+  opacity: 0.4;
   transition: opacity 0.3s;
 }
 

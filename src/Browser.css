@@ -11,3 +11,11 @@
   display:block;
 }
 */
+
+.action-cell {
+  opacity: 0.1;
+}
+
+.Browser tr.table-active .action-cell, .Browser tr:hover .action-cell {
+  opacity: 1;
+}

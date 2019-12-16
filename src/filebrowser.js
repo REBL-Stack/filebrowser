@@ -4,11 +4,23 @@ import { useBlockstack, useFilesList} from 'react-blockstack'
 import { saveAs } from 'file-saver'
 import {fromEvent} from 'file-selector'
 import { Atom, swap, useAtom, deref } from "@dbeining/react-atom"
-import { without, union, nth, concat, slice } from 'lodash'
+import { without, union, nth, concat, slice, isFunction } from 'lodash'
 import fp, { extend, sortedIndex, isNull, trimStart, startsWith, isNumber, compose, sortedUniqBy,
-             partial, filter, flow, isEmpty, merge, split } from 'lodash/fp'
+             partial, filter, flow, isEmpty, merge, split, get, assoc } from 'lodash/fp'
 
 
+function useAtomState (atom) {
+  // like useState
+  const state = useAtom(atom)
+  const setState = useCallback((value) => {
+    if (isFunction(value)) {
+      swap(atom, value)
+    } else {
+      swap(atom, () => value)
+    }
+  },[atom])
+  return [state, setState]
+}
 
 // PR is on way in lodash after 4.17
 const insert = (arr, item, index) => concat(slice(arr, 0, index), item, slice(arr, index))
@@ -209,4 +221,26 @@ export function useLocal (files, root) {
     }
   }, [files, root])
   return state
+}
+
+const selectedAtom = Atom.of({})
+
+export function useSelection () {
+  const state = useAtom(selectedAtom)
+  const selection = state.filter()
+  // incomplete
+}
+
+export function useSelected (pathname) {
+  const getter = get(pathname)
+  const [state, setState] = useAtomState(selectedAtom)
+  const isMultiSelect = false
+  const toggle = useCallback(() => {
+    if (isMultiSelect) {
+      setState((state) => assoc(pathname, !getter(state), state))
+    } else {
+      setState({[pathname]: true})
+    }
+  }, [pathname])
+  return [getter(state), toggle]
 }

@@ -23,14 +23,14 @@ export default function Main ({ person }) {
     <div className="w-100 d-flex flex-column">
       <div className="w-100 navbar-fixed">
         <Progress hidden={complete && isNull(progress)} animated value={progress ? progress * 100 : 100}/>
-        <BrowserTrail title={<FontAwesomeIcon icon={faHome} style={(trail.length == 0) ? {visibility: "hidden"} : null }/> }
+        <BrowserTrail title={<FontAwesomeIcon icon={faHome} style={isEmpty(trail) ? {visibility: "hidden"} : null }/> }
                       trail={trail} onChange={setTrail}/>
       </div>
-      <div className="w-100 overflow-auto grow-1">
+      <div className="w-100 overflow-auto grow-1 d-flex flex-column">
         <div className="pb-5">
           {!isEmpty(items) &&
            <Browser items={items}/>}
-           <Dropzone className={["Dropzone mx-5", isEmpty(items) ? "h-75" : "h-25"].join(" ")}
+           <Dropzone className={["Dropzone mx-5 grow-1", isEmpty(items) ? "mh-100" : "h-25"].join(" ")}
                      handleUpload={handleUpload}
                      options={{multiple: true, maxSize: gaiaMaxFileSize}}
                      pickDirectory={false}>
