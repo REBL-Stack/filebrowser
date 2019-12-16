@@ -239,7 +239,7 @@ export function useSelected (pathname) {
     if (isMultiSelect) {
       setState((state) => assoc(pathname, !getter(state), state))
     } else {
-      setState({[pathname]: true})
+      setState((state) => ({[pathname]: !getter(state)}))
     }
   }, [pathname])
   return [getter(state), toggle]
