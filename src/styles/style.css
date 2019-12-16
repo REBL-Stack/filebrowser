@@ -30,6 +30,12 @@ html, body {
   color: var(--brand-accent);
 }
 
+.btn.btn-primary[disabled]:hover {
+  /* for testing */
+  color: gray;
+  opacity: 0.1;
+}
+
 
 .btn-secondary {
   color: var(--brand-lines);

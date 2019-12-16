@@ -13,7 +13,8 @@ export default function Upload ({className, uploadFiles}) {
     userData &&
     <div className="Upload">
         <input {...inputProps}/>
-        <button className="btn btn-primary" onClick={ uploadAction }>
+        <button className="btn btn-primary" onClick={ uploadAction }
+                disabled={!uploadAction || null}>
           <FontAwesomeIcon className="mr-2" icon={faUpload}/>
           Upload
         </button>

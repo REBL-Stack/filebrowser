@@ -185,13 +185,15 @@ export function useUpload (props) {
   const onFileChange = (evt) => {
         fromEvent(evt).then(handleUpload)
       }
-  const fileUploader = useRef(null)
-  const inputProps = merge({ref: fileUploader, type:"file", onChange: onFileChange,
+  const fileUploaderRef = useRef(null)
+  const inputProps = merge({ref: fileUploaderRef, type:"file", onChange: onFileChange,
                             style: {display: 'none'}, multiple: true, accept: "*/*"}, {})
                           //(allowFolders ? {webkitdirectory: "", mozdirectory: "", directory: ""} : {})
-  const uploadAction = () => {
-      fileUploader.current.click()
-    }
+  const uploadAction = useCallback(() => {
+    // fileUploaderRef is not reactive...
+    // and may not be consistent with inputProps... so test upload if changing.
+    inputProps.ref.current.click()
+  }, [inputProps])
   return ({uploadAction, inputProps, handleUpload, progress})
 }
 
