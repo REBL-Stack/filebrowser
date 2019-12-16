@@ -35,27 +35,33 @@ function BrowserTrail ({trail, onChange, title}) {
 export default function Main ({ person }) {
   const [files, complete] = useFiles()
   const {handleUpload, progress} = useUpload()
-  // const [trail, setTrail] = useState(["MVP"])
   const {trail, setTrail, root} = useBrowser()
   const items = useLocal(files, root)
-  console.log("ITEMS:", items)
   return (
-    <main>
-      <Progress hidden={complete && isNull(progress)} animated value={progress ? progress * 100 : 100}/>
-      <div className="container-fluid m-auto" style={{maxWidth: "50rem"}}>
+  <main className="position-fixed vw-100 h-100 d-flex flex-row">
+    <div className="navbar-light mh-100" style={{minWidth: "3em"}}>
+    </div>
+    <div className="w-100 d-flex flex-column">
+      <div className="w-100">
+        <Progress hidden={complete && isNull(progress)} animated value={progress ? progress * 100 : 100}/>
         <BrowserTrail title={<FontAwesomeIcon icon={faHome} style={(trail.length == 0) ? {visibility: "none"} : null }/> }
                       trail={trail} onChange={setTrail}/>
-        {!isEmpty(items) &&
-          <div className="" style={{minHeight: "50vh"}}>
-            <Browser items={items}/>
-          </div>}
-         <Dropzone className={["Dropzone mx-5", isEmpty(items) ? "h-75" : "h-25"].join(" ")}
-                   handleUpload={handleUpload}
-                   options={{multiple: true, maxSize: gaiaMaxFileSize}}
-                   pickDirectory={false}>
-           <FontAwesomeIcon className="mr-2 text-secondary" icon={faUpload}/>
-         </Dropzone>
       </div>
-    </main>
+      <div className="w-100 overflow-auto grow-1">
+        <div className="mh-100 inspect">
+          {!isEmpty(items) &&
+            <div className="">
+              <Browser items={items}/>
+            </div>}
+           <Dropzone className={["Dropzone mx-5", isEmpty(items) ? "h-75" : "h-25"].join(" ")}
+                     handleUpload={handleUpload}
+                     options={{multiple: true, maxSize: gaiaMaxFileSize}}
+                     pickDirectory={false}>
+             <FontAwesomeIcon className="mr-2 text-secondary" icon={faUpload}/>
+           </Dropzone>
+        </div>
+      </div>
+    </div>
+  </main>
   )
 }

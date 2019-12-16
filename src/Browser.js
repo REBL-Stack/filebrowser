@@ -6,6 +6,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faDownload, faFile, faFolder, faTrash } from '@fortawesome/free-solid-svg-icons'
 import {useSave, useFilter, useMatchGlobal, useTrash, useLocal, useBrowser, useItem } from './filebrowser'
 
+import './Browser.css'
+
 function ExportFile ({filepath, onCompletion}) {
   const [content] = useFile(filepath)
   const {progress} = useSave(content, filepath, onCompletion)
@@ -61,7 +63,8 @@ function FileRow ({item}) {
     <tr className={[!isNull(matching) ? "d-flex" : "d-none",
                     !(exists === true) ? "text-muted" : "text-dark"].join(" ")}>
       <th className="flex-grow-1 align-bottom">
-        <a name={localName} onClick={openAction || null}>
+        <a name={localName} href={openAction ? "#" : null}
+           onClick={openAction || null}>
           <FontAwesomeIcon className="mr-2" icon={isDir ? faFolder : faFile}/>
           <MarkedMatch text={localName} match={filter}/>
         </a>
@@ -82,11 +85,10 @@ function FileRow ({item}) {
   )
 }
 
-function Table ({items}) {
-  // Files is a sorted array
-  //console.log("BROWSE:", files, items)
+export default function Browser ({items}) {
+  // Items is a sorted array
   return (
-    <table className="table border-bottom-dark mt-2">
+    <table className="Browser table border-bottom-dark mt-2">
       <tbody>
         {isEmpty(items) &&
           <div className="alert alert-dark">
@@ -97,8 +99,4 @@ function Table ({items}) {
       </tbody>
     </table>
   )
-}
-
-export default function Browser (props) {
-  return Table(props)
 }

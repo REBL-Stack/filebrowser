@@ -1,6 +1,8 @@
 /* Globals */
 
-html,body{min-height:100vh}
+html, body{
+  min-height:100vh
+}
 
 :root  {
   /* https://projects.invisionapp.com/boards/HE2VVROFSGB27 */
@@ -17,6 +19,8 @@ html,body{min-height:100vh}
 :root  {
   --primary: var(--brand-accent);
 }
+
+/* Customize boostrap theme */
 
 .btn.btn-primary {
   color: var(--brand-accent);
@@ -35,6 +39,10 @@ html,body{min-height:100vh}
   color: var(--brand-accent);
 }
 
+.bg-secondary {
+  background-color: var(--brand-lines);
+}
+
 .btn.btn-warning:not(:hover) {
   color: var(--gray);
 }
@@ -50,10 +58,6 @@ html,body{min-height:100vh}
   opacity: 0.3;
 }
 
-#App {
-  min-height: 100vh;
-}
-
 .inspect {
   border: thin solid red;
 }
@@ -62,14 +66,18 @@ html,body{min-height:100vh}
   background-color: var(--brand-dark) !important;
 }
 
+.navbar-light {
+  background-color: var(--brand-mild) !important;
+}
+
+/* Basic Layout */
+
+#App {
+}
+
 /* Avatar */
 .avatar{width:100px;height:100px; border-radius: 50%}
 .avatar-section{margin:25px;}
-
-/* Scaffolding */
-/*.site-wrapper{width:100%;height:90% !important;min-height:90vh !important;}
-.site-wrapper-inner{display:flex;flex-direction:column;justify-content:center;margin-right:auto;margin-left:auto;width:100%;height:90%;}
-*/
 
 .panel-landing {
   max-width: 40em;
@@ -110,6 +118,12 @@ html,body{min-height:100vh}
   opacity: 1;
 }
 
+/* Breadcrumbs */
+
+.BrowserTrail .breadcrumb {
+  margin-bottom: 0;
+}
+
 /* Dropzone */
 
 .Dropzone {
@@ -118,7 +132,7 @@ html,body{min-height:100vh}
   border: 2px dashed rgb(187, 186, 186);
   border-radius: 5%;
   padding: 1em;
-  display: flex;
+  /*display: flex;*/
   align-items: center;
   justify-content: center;
   flex-direction: column;
