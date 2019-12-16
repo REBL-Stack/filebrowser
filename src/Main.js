@@ -38,21 +38,19 @@ export default function Main ({ person }) {
   const {trail, setTrail, root} = useBrowser()
   const items = useLocal(files, root)
   return (
-  <main className="position-fixed vw-100 h-100 d-flex flex-row">
+  <main className="vw-100 h-100 d-flex flex-row">
     <div className="navbar-light mh-100" style={{minWidth: "3em"}}>
     </div>
     <div className="w-100 d-flex flex-column">
-      <div className="w-100">
+      <div className="w-100 navbar-fixed">
         <Progress hidden={complete && isNull(progress)} animated value={progress ? progress * 100 : 100}/>
         <BrowserTrail title={<FontAwesomeIcon icon={faHome} style={(trail.length == 0) ? {visibility: "none"} : null }/> }
                       trail={trail} onChange={setTrail}/>
       </div>
       <div className="w-100 overflow-auto grow-1">
-        <div className="mh-100 inspect">
+        <div className="pb-5">
           {!isEmpty(items) &&
-            <div className="">
-              <Browser items={items}/>
-            </div>}
+           <Browser items={items}/>}
            <Dropzone className={["Dropzone mx-5", isEmpty(items) ? "h-75" : "h-25"].join(" ")}
                      handleUpload={handleUpload}
                      options={{multiple: true, maxSize: gaiaMaxFileSize}}

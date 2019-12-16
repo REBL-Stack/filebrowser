@@ -1,7 +1,7 @@
 /* Globals */
 
-html, body{
-  min-height:100vh
+html, body {
+  height:100vh;
 }
 
 :root  {
@@ -73,6 +73,7 @@ html, body{
 /* Basic Layout */
 
 #App {
+  height: 100vh;
 }
 
 /* Avatar */
