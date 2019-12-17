@@ -260,37 +260,20 @@ function useAtomReducer (atom, reducer) {
 
 const transformer = (change) => isFunction(change) ? change : () => change
 
-function storageReducer (state, event) {
-    console.log("LocalStorage dispatch:", state, event)
-    switch (event.action) {
-      case "init":
-        const {value} = event
-        return {value: value, stale: false}
-      case "update":
-        const {change} = event
-        const markStale = assoc("stale", true)
-        return markStale(update("value", transformer(change), state))
-      case "stored":
-        const markDone = assoc("stale", false)
-        return markDone(state)
-      default:
-        return state
-    }
-  }
-
 function useLocalStorageAtom (storageKey: string, atom) {
   // FIX: Associate with the current url so each starred belong to their own gaia bucket.
   // libraries available for this...
-
-  const [{value}, dispatch] = useAtomReducer(atom, storageReducer)
+  const [value, setValue] = useAtomState(atom)
   const [stale, setStale] = useState(false)
-  const shouldLoad = isUndefined(value)
+  const shouldLoad = isUndefined(value) // but why doesnt atom return initialized value?
   useEffect(() => {
     if (storageKey) {
       if (shouldLoad) {
+        console.log("LocalStorage loading")
         const stored = localStorage.getItem([storageKey])
         const content = !isUndefined(stored) ? JSON.parse(stored) : {}
-        dispatch({action: "init", value: content})
+        setValue(content)
+        setStale(false)
       } else {
         console.log("LocalStorage already loaded")
       }
@@ -302,25 +285,23 @@ function useLocalStorageAtom (storageKey: string, atom) {
   useEffect(() => {
     if ( stale ) {
       console.log("LocalStorage storing:", value, stale)
-      // keep before to avoid reentry
-      dispatch({action: "stored"})
-      setStale(false)
       if (!isNull(value)) {
         localStorage.setItem([storageKey], JSON.stringify(value))
       } else {
         localStorage.removeItem([storageKey])
       }
+      setStale(false)
     }}, [storageKey, stale, value])
 
   const setChange = useCallback((change) => {
-    dispatch({action: "update", change: change})
+    setValue(change)
     setStale(true)
-  }, [dispatch])
+  }, [setValue, setStale])
 
-  return [value, setChange];
+  return [value, !shouldLoad ? setChange : null];
 }
 
-const starredAtom = Atom.of({})
+const starredAtom = Atom.of()
 
 export function useStarred () {
   return useLocalStorageAtom('starred', starredAtom)
@@ -333,5 +314,5 @@ export function useStarredItem (pathname) {
     console.log("Toggle:", pathname, starred)
     setStarred((state) => assoc([pathname], !get(pathname, state), state))
   }, [pathname, setStarred])
-  return [get(pathname, starred), toggleStar]
+  return [starred && get(pathname, starred), setStarred ? toggleStar : null]
 }
