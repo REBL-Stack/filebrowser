@@ -3,10 +3,13 @@ import { useFile } from 'react-blockstack'
 import { trimEnd } from 'lodash'
 import { isNumber, isEmpty, isNull, split, compose, partial } from 'lodash/fp'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faDownload, faFile, faFolder, faTrash } from '@fortawesome/free-solid-svg-icons'
-import {useSave, useFilter, useMatchGlobal, useTrash, useLocal, useBrowser, useItem, useSelected } from './filebrowser'
+import { faDownload, faFile, faFolder, faTrash, faStar } from '@fortawesome/free-solid-svg-icons'
+import {useSave, useFilter, useMatchGlobal, useTrash, useLocal, useBrowser, useItem, useSelected,
+        useStarredItem } from './filebrowser'
 
 import './Browser.css'
+
+const noPropagation = (f) => (e) => {e.stopPropagation(); f(); return false}
 
 function ExportFile ({filepath, onCompletion}) {
   const [content] = useFile(filepath)
@@ -39,27 +42,34 @@ function MarkedMatch ({text, match}) {
   )
 }
 
-function DownloadAction ({saving, setSaving}) {
+function DownloadAction ({pathname, disabled, action}) {
+  const [saving, setSaving] = useState(false)
   return (
+  <>
+    {saving &&
+     <ExportFile filepath={pathname} onCompletion={() => setSaving(false)}/>}
     <button className="btn btn-secondary my-0"
-            disabled={saving}
+            disabled={saving || null}
             title="Download file"
             onClick={() => setSaving(true)}>
-      <FontAwesomeIcon className="dropzone-icon" icon={faDownload}/>
+      <FontAwesomeIcon icon={faDownload}/>
     </button>
+  </>
   )
 }
+
 
 function FileRow ({item}) {
   const [match] = useMatchGlobal()
   const [filter] = useFilter(match)
-  const {isDir, fileName, localName, root} = item
+  const {isDir, localName, root, pathname} = item
+  const fileName = pathname // eliminate fileName
   const {openAction} = useItem(item)
-  const [saving, setSaving] = useState(false)
-  const matching = fileName && filter && filter(fileName)
   const [exists, doTrash] = useTrash(item)
+  const matching = fileName && filter && filter(fileName)
   const [selected, toggleSelected] = useSelected(fileName)
-  console.log("FileRow:", matching, item)
+  const [starred, toggleStarred] = useStarredItem(fileName)
+  //console.log("FileRow:", matching, item)
   return (
     <tr className={[!isNull(matching) ? "d-flex" : "d-none",
                     !(exists === true) ? "text-muted" : "text-dark",
@@ -67,18 +77,19 @@ function FileRow ({item}) {
         onClick={toggleSelected}>
       <th className="flex-grow-1 align-bottom">
         <a name={localName} href={openAction ? "#" : null}
-           onClick={openAction ? (e) => {openAction(); e.stopPropagation()} : null}>
-          <FontAwesomeIcon className="mr-2" icon={isDir ? faFolder : faFile}/>
+           onClick={openAction ? noPropagation(openAction) : null}>
+          <FontAwesomeIcon className="mr-1" icon={isDir ? faFolder : faFile}
+                           style={{minWidth: "2rem"}}/>
+          <FontAwesomeIcon className={["mr-3 star", starred ? "active" : ""].join(" ")}
+             icon={faStar} onClick={noPropagation(toggleStarred)}/>
           <MarkedMatch text={localName} match={filter}/>
         </a>
       </th>
-      <td className="action-cell align-middle py-1">
-        {saving &&
-        <ExportFile filepath={fileName} onCompletion={() => setSaving(false)}/>}
+      <td className="action-cell align-middle">
         {!isDir &&
-          <DownloadAction {...{setSaving, saving}}/>}
+          <DownloadAction pathname={fileName}/>}
         <button className="btn btn-warning my-0"
-                disabled={saving}
+                // disabled={saving}
                 title="Delete file"
                 onClick={() => doTrash()}>
           <FontAwesomeIcon icon={faTrash}/>
@@ -98,7 +109,7 @@ export default function Browser ({items}) {
             Empty...
           </div>}
         {items && items.map( (item) =>
-         <FileRow key={item.fileName} item={item}/> )}
+         <FileRow key={item.pathname} item={item}/> )}
       </tbody>
     </table>
   )

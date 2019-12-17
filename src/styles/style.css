@@ -68,6 +68,10 @@ html, body {
   border: thin solid red;
 }
 
+.inspect .inspect {
+  border: thin solid blue;
+}
+
 .navbar-dark {
   background-color: var(--brand-dark) !important;
 }
@@ -130,6 +134,10 @@ html, body {
 .BrowserTrail .breadcrumb {
   margin-bottom: 0;
 }
+
+/* Browser */
+
+
 
 /* Dropzone */
 

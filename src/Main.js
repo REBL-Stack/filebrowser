@@ -3,12 +3,47 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUpload, faSitemap, faHome } from '@fortawesome/free-solid-svg-icons'
 import { isNull, isEmpty } from 'lodash/fp'
 import { Progress, Breadcrumb, BreadcrumbItem } from 'reactstrap'
-import {useUpload, useFiles, useBrowser, useLocal } from './filebrowser'
+import {useUpload, useFiles, useBrowser, useLocal, useStarred, useStarredItem } from './filebrowser'
 import Browser from './Browser'
 import Dropzone from './Dropzone'
 import BrowserTrail from './Trail'
+import Upload from './Upload'
 
 const gaiaMaxFileSize = (25 * 1024 * 1024 - 1)
+
+function StarredItem ({item}) {
+  const [starred, toggleStarred] = useStarredItem(item)
+  // console.log("STARRED:", item)
+  return (
+    <a className="list-group-item list-group-item-action" hidden={!starred || null}>
+      {item.pathname}
+    </a>
+  )
+}
+
+function Sidebar ({files}) {
+  return (
+  <div className="navbar-light mh-100" style={{minWidth: "13em"}}>
+    <div className="d-flex flex-column h-100">
+      <div className="pt-5 text-center" style={{minHeight: "12em"}}>
+        <div className="mx-auto d-inline-block">
+          <Upload/>
+        </div>
+      </div>
+      <hr className="w-100"/>
+      <div className="flex-grow-1 overflow-auto">
+        <div hidden={null} className="list-group">
+        {false && files && files.map( (item) =>
+         <StarredItem key={item.pathname} item={item}/>)}
+        </div>
+      </div>
+      <div className="align-self-center mb-3 mt-1">
+        &copy;2019 REBL Alliance
+      </div>
+    </div>
+  </div>
+  )
+}
 
 export default function Main ({ person }) {
   const [files, complete] = useFiles()
@@ -18,8 +53,7 @@ export default function Main ({ person }) {
   console.log("Trail:", trail)
   return (
   <main className="vw-100 h-100 d-flex flex-row">
-    <div className="navbar-light mh-100" style={{minWidth: "3em"}}>
-    </div>
+    <Sidebar files={files}/>
     <div className="w-100 d-flex flex-column">
       <div className="w-100 navbar-fixed">
         <BrowserTrail title={<FontAwesomeIcon icon={faHome} style={isEmpty(trail) ? {visibility: "hidden"} : null }/> }

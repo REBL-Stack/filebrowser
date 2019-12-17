@@ -5,8 +5,9 @@ import { saveAs } from 'file-saver'
 import {fromEvent} from 'file-selector'
 import { Atom, swap, useAtom, deref } from "@dbeining/react-atom"
 import { without, union, nth, concat, slice, isFunction } from 'lodash'
-import fp, { extend, sortedIndex, isNull, trimStart, startsWith, isNumber, compose, sortedUniqBy,
-             partial, filter, flow, isEmpty, merge, split, get, assoc } from 'lodash/fp'
+import fp, { extend, sortedIndex, isNull, isUndefined,
+             trimStart, startsWith, isNumber, compose, sortedUniqBy,
+             partial, filter, flow, isEmpty, merge, split, get, assoc, update } from 'lodash/fp'
 
 
 function useAtomState (atom) {
@@ -45,7 +46,8 @@ export function useFiles() {
   useEffect(() => {
     // TODO: Reuse existing file objects
     // console.log("FILES:", files, filesList)
-    setState(files.map((name) => ({fileName: name, fileSize: 0})))
+    // ## Fix: eliminate fileName for pathname
+    setState(files.map((name) => ({fileName: name, pathname: name, fileSize: 0})))
   },[files])
   return [state, !isNull(filecount)]
 }
@@ -211,7 +213,8 @@ export function useLocal (files, root) {
       const makeLocalItem = (item) => {
         const localName = getLocalName(item.fileName)
         const isDir = localName && localName.endsWith('/')
-        return ({...item, localName, root, isDir})
+        const pathname = root + localName
+        return ({...item, localName, root, isDir, pathname})
       }
       //console.log("UNIQ1:", root, localName(root.length, '/')("MVP/foo"))  // expect "foo"
       //console.log("UNIQ2:", root, localName(root.length, '/')("MVP/foo/bar")) // expect "foo/"
@@ -245,4 +248,90 @@ export function useSelected (pathname) {
     }
   }, [pathname])
   return [getter(state), toggle]
+}
+
+function useAtomReducer (atom, reducer) {
+  const state = useAtom(atom)
+  const dispatch = useCallback((event) => {
+    swap(atom, (state) => reducer(state, event))
+  }, [atom])
+  return [state, dispatch]
+}
+
+const transformer = (change) => isFunction(change) ? change : () => change
+
+function storageReducer (state, event) {
+    console.log("LocalStorage dispatch:", state, event)
+    switch (event.action) {
+      case "init":
+        const {value} = event
+        return {value: value, stale: false}
+      case "update":
+        const {change} = event
+        const markStale = assoc("stale", true)
+        return markStale(update("value", transformer(change), state))
+      case "stored":
+        const markDone = assoc("stale", false)
+        return markDone(state)
+      default:
+        return state
+    }
+  }
+
+function useLocalStorageAtom (storageKey: string, atom) {
+  // FIX: Associate with the current url so each starred belong to their own gaia bucket.
+  // libraries available for this...
+
+  const [{value}, dispatch] = useAtomReducer(atom, storageReducer)
+  const [stale, setStale] = useState(false)
+  const shouldLoad = isUndefined(value)
+  useEffect(() => {
+    if (storageKey) {
+      if (shouldLoad) {
+        const stored = localStorage.getItem([storageKey])
+        const content = !isUndefined(stored) ? JSON.parse(stored) : {}
+        dispatch({action: "init", value: content})
+      } else {
+        console.log("LocalStorage already loaded")
+      }
+    } else {
+      console.log("LocalStorage noop")
+    }
+  }, [storageKey, shouldLoad])
+
+  useEffect(() => {
+    if ( stale ) {
+      console.log("LocalStorage storing:", value, stale)
+      // keep before to avoid reentry
+      dispatch({action: "stored"})
+      setStale(false)
+      if (!isNull(value)) {
+        localStorage.setItem([storageKey], JSON.stringify(value))
+      } else {
+        localStorage.removeItem([storageKey])
+      }
+    }}, [storageKey, stale, value])
+
+  const setChange = useCallback((change) => {
+    dispatch({action: "update", change: change})
+    setStale(true)
+  }, [dispatch])
+
+  return [value, setChange];
+}
+
+const starredAtom = Atom.of({})
+
+export function useStarred () {
+  return useLocalStorageAtom('starred', starredAtom)
+}
+
+export function useStarredItem (pathname) {
+  const [starred, setStarred] = useStarred()
+  // const [state, setState] = useState(() => get(pathname, starred))
+  const toggleStar = useCallback( () => {
+    console.log("Toggle:", pathname, starred)
+    setStarred((state) => assoc([pathname], !get(pathname, state), state))
+  }, [pathname, setStarred])
+  return [get(pathname, starred), toggleStar]
 }

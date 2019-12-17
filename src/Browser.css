@@ -19,3 +19,16 @@
 .Browser tr.table-active .action-cell, .Browser tr:hover .action-cell {
   opacity: 1;
 }
+
+.Browser th a {
+  color: inherit;
+}
+
+.Browser th .star {
+  color: gray;
+  opacity: 0.6;
+}
+
+.Browser th .star.active {
+  color: var(--orange);
+}
