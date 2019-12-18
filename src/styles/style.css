@@ -30,10 +30,10 @@ html, body {
   color: var(--brand-accent);
 }
 
-.btn.btn-primary[disabled]:hover {
-  /* for testing */
+.btn.btn-primary[disabled] {
   color: gray;
-  opacity: 0.1;
+  opacity: 0.2;
+  pointer-events: none;
 }
 
 
@@ -51,9 +51,6 @@ html, body {
 
 .btn.btn-warning:not(:hover) {
   color: var(--gray);
-}
-
-.text-primary {
 }
 
 .navbar .btn {
@@ -74,6 +71,10 @@ html, body {
 
 .navbar-dark {
   background-color: var(--brand-dark) !important;
+}
+
+.text-light {
+  color: var(--brand-mild);
 }
 
 .navbar-light {

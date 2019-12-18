@@ -7,7 +7,8 @@ import { Atom, swap, useAtom, deref } from "@dbeining/react-atom"
 import { without, union, nth, concat, slice, isFunction } from 'lodash'
 import fp, { extend, sortedIndex, isNull, isUndefined,
              trimStart, startsWith, isNumber, compose, sortedUniqBy,
-             partial, filter, flow, isEmpty, merge, split, get, assoc, update } from 'lodash/fp'
+             partial, filter, flow, isEmpty, merge, split, get, assoc, update,
+             negate, isEqual } from 'lodash/fp'
 
 
 function useAtomState (atom) {
@@ -21,6 +22,15 @@ function useAtomState (atom) {
     }
   },[atom])
   return [state, setState]
+}
+
+
+function useAtomReducer (atom, reducer) {
+  const state = useAtom(atom)
+  const dispatch = useCallback((event) => {
+    swap(atom, (state) => reducer(state, event))
+  }, [atom])
+  return [state, dispatch]
 }
 
 // PR is on way in lodash after 4.17
@@ -62,6 +72,13 @@ function insertFile (file) {
 
 function removeFile (file) {
   swap(filesAtom, (files) => without(files, file))
+}
+
+export function useFolders () {
+  const createFolder = (name) => {
+    insertFile(name + '/') // FIX: Ensure single slash at end
+  }
+  return [null, createFolder]
 }
 
 const trailAtom = Atom.of({trail: []})
@@ -203,12 +220,13 @@ const localNameFn = (start, separator) =>
   (path) => ((ix) => path.substring(start, (ix === -1) ? path.length : ix+1))
             (path.indexOf(separator, start+1))
 
-export function useLocal (files, root) {
+export function useLocalItems (files, root) {
   const [state, setState] = useState()
   useEffect(() => {
     if (files) {
       const getLocalName = localNameFn(root.length, '/')
-      const isIncluded = compose(startsWith(root), file => file.fileName)
+      const isSubfile = fp.overEvery([negate(isEqual(root)), startsWith(root)])
+      const isIncluded = compose(isSubfile, file => file.fileName)
       const uniqForDir = sortedUniqBy(compose(getLocalName, file => file.fileName))
       const makeLocalItem = (item) => {
         const localName = getLocalName(item.fileName)
@@ -248,14 +266,6 @@ export function useSelected (pathname) {
     }
   }, [pathname])
   return [getter(state), toggle]
-}
-
-function useAtomReducer (atom, reducer) {
-  const state = useAtom(atom)
-  const dispatch = useCallback((event) => {
-    swap(atom, (state) => reducer(state, event))
-  }, [atom])
-  return [state, dispatch]
 }
 
 const transformer = (change) => isFunction(change) ? change : () => change

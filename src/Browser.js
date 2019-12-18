@@ -4,7 +4,7 @@ import { trimEnd } from 'lodash'
 import { isNumber, isEmpty, isNull, split, compose, partial } from 'lodash/fp'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faDownload, faFile, faFolder, faTrash, faStar } from '@fortawesome/free-solid-svg-icons'
-import {useSave, useFilter, useMatchGlobal, useTrash, useLocal, useBrowser, useItem, useSelected,
+import {useSave, useFilter, useMatchGlobal, useTrash, useBrowser, useItem, useSelected,
         useStarredItem } from './filebrowser'
 
 import './Browser.css'

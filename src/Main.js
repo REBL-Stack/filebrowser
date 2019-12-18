@@ -3,11 +3,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUpload, faSitemap, faHome } from '@fortawesome/free-solid-svg-icons'
 import { isNull, isEmpty } from 'lodash/fp'
 import { Progress, Breadcrumb, BreadcrumbItem } from 'reactstrap'
-import {useUpload, useFiles, useBrowser, useLocal, useStarred, useStarredItem } from './filebrowser'
+import {useUpload, useFiles, useBrowser, useLocalItems, useStarred, useStarredItem } from './filebrowser'
 import Browser from './Browser'
 import Dropzone from './Dropzone'
 import BrowserTrail from './Trail'
 import Upload from './Upload'
+import CreateFolder from './CreateFolder'
 
 const gaiaMaxFileSize = (25 * 1024 * 1024 - 1)  // FIX: Get from SDK
 
@@ -27,7 +28,10 @@ function Sidebar ({files}) {
     <div className="d-flex flex-column h-100">
       <div className="pt-5 text-center" style={{minHeight: "12em"}}>
         <div className="mx-auto d-inline-block">
-          <Upload/>
+          <div className="text-left">
+            <CreateFolder/>
+            <Upload/>
+          </div>
         </div>
       </div>
       <hr className="w-100"/>
@@ -49,7 +53,7 @@ export default function Main ({ person }) {
   const [files, complete] = useFiles()
   const {handleUpload, progress} = useUpload()
   const {trail, setTrail, root} = useBrowser()
-  const items = useLocal(files, root)
+  const items = useLocalItems(files, root)
   console.log("Trail:", trail)
   return (
   <main className="vw-100 h-100 d-flex flex-row">
