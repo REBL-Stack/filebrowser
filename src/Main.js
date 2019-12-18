@@ -9,7 +9,7 @@ import Dropzone from './Dropzone'
 import BrowserTrail from './Trail'
 import Upload from './Upload'
 
-const gaiaMaxFileSize = (25 * 1024 * 1024 - 1)
+const gaiaMaxFileSize = (25 * 1024 * 1024 - 1)  // FIX: Get from SDK
 
 function StarredItem ({item}) {
   const [starred, toggleStarred] = useStarredItem(item)
@@ -37,8 +37,8 @@ function Sidebar ({files}) {
          <StarredItem key={item.pathname} item={item}/>)}
         </div>
       </div>
-      <div className="align-self-center mb-3 mt-1">
-        &copy;2019 REBL Alliance
+      <div className="align-self-center mb-3 mt-1 text-muted">
+        <small>&copy;2019 REBL Alliance</small>
       </div>
     </div>
   </div>
