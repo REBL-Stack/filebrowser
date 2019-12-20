@@ -31,8 +31,7 @@ html, body {
 }
 
 .btn.btn-primary[disabled] {
-  color: gray;
-  opacity: 0.2;
+  opacity: 0.5;
   pointer-events: none;
 }
 
@@ -87,6 +86,9 @@ html, body {
   height: 100vh;
 }
 
+.Landing {
+}
+
 /* Avatar */
 .avatar{width:100px;height:100px; border-radius: 50%}
 .avatar-section{margin:25px;}
@@ -135,10 +137,6 @@ html, body {
 .BrowserTrail .breadcrumb {
   margin-bottom: 0;
 }
-
-/* Browser */
-
-
 
 /* Dropzone */
 

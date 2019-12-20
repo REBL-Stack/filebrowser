@@ -115,10 +115,11 @@ function defaultFilter (type, match) {
 }
 
 export function useFilter (match: string) {
+  const ignoreCase = true
   const [reg, setReg] = useState()
   useEffect( () => {
      try {
-       setReg(new RegExp(match) )
+       setReg(new RegExp(match, ignoreCase ? "i" : null) )
      }
      catch {
        setReg(null)

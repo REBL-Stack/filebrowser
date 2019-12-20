@@ -49,7 +49,7 @@ function Sidebar ({files}) {
   )
 }
 
-export default function Main ({ person }) {
+export default function Main () {
   const [files, complete] = useFiles()
   const {handleUpload, progress} = useUpload()
   const {trail, setTrail, root} = useBrowser()

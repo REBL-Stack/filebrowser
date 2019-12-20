@@ -40,14 +40,14 @@ function NewFolderModal (props) {
   )
 }
 
-export default function CreateFolder ({disabled}) {
+export default function CreateFolder ({disabled, className}) {
   const [dummy, createFolder] = useFolders()
   const [modal, setModal] = useState(false);
   const toggle = () => setModal(!modal)
   return(
   <>
     <NewFolderModal open={modal} toggle={toggle} submit={createFolder}/>
-    <button className="btn btn-primary" onClick={ toggle }
+    <button className="btn btn-secondary" onClick={ toggle }
             disabled={disabled || null}>
       <FontAwesomeIcon className="mr-2" icon={faFolderPlus}/>
       New Folder

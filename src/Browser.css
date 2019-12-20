@@ -12,6 +12,14 @@
 }
 */
 
+.Browser.table-striped tbody tr:nth-of-type(2n+1):not(:hover) {
+  background-color: rgb(0,0,0,0.01);
+}
+
+.Browser.table-striped td {
+  border: none;
+}
+
 .action-cell {
   opacity: 0.1;
 }
@@ -24,11 +32,22 @@
   color: inherit;
 }
 
-.Browser th .star {
+.Browser tr .icon {
+  color: gray;
+  opacity: 1.0;
+}
+
+.Browser tr .star {
   color: gray;
   opacity: 0.6;
 }
 
-.Browser th .star.active {
+.Browser tr .star.active {
   color: var(--orange);
+}
+
+.Browser tbody tr .Pathname {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }

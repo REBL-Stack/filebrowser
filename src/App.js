@@ -8,8 +8,8 @@ export default function App (props) {
   const { person, signIn } = useBlockstack()
   return (
   <Router>
-    {signIn && <Landing/>}
-    {person && <Main person={person}/>}
+    <Main/>
+    <Landing/>
   </Router>
   )
 }

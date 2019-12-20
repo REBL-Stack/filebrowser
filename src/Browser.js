@@ -75,16 +75,17 @@ function FileRow ({item}) {
                     !(exists === true) ? "text-muted" : "text-dark",
                     selected ? "table-active" : ""].join(" ")}
         onClick={toggleSelected}>
-      <th className="flex-grow-1 align-bottom">
+      <td className="Pathname flex-grow-1 align-bottom">
         <a name={localName} href={openAction ? "#" : null}
            onClick={openAction ? noPropagation(openAction) : null}>
-          <FontAwesomeIcon className="mr-1" icon={isDir ? faFolder : faFile}
+          <FontAwesomeIcon className="mr-1 icon" icon={isDir ? faFolder : faFile}
                            style={{minWidth: "2rem"}}/>
           <FontAwesomeIcon className={["mr-3 star", starred ? "active" : ""].join(" ")}
-             icon={faStar} onClick={noPropagation(toggleStarred)}/>
+                           onClick={noPropagation(toggleStarred)}
+                           icon={faStar}/>
           <MarkedMatch text={localName} match={filter}/>
         </a>
-      </th>
+      </td>
       <td className="action-cell align-middle">
         {!isDir &&
           <DownloadAction pathname={fileName}/>}
@@ -102,7 +103,7 @@ function FileRow ({item}) {
 export default function Browser ({items}) {
   // Items is a sorted array
   return (
-    <table className="Browser table table-hover border-bottom-dark mt-2">
+    <table className="Browser table table-hover table-striped border-bottom-dark mt-2">
       <tbody>
         {isEmpty(items) &&
           <div className="alert alert-dark">

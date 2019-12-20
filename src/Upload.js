@@ -10,10 +10,9 @@ export default function Upload ({className, uploadFiles}) {
   // const [, dispatch] = useBrowser()
   const {uploadAction, inputProps} = useUpload()
   return (
-    userData &&
     <div className="Upload">
         <input {...inputProps}/>
-        <button className="btn btn-primary" onClick={ uploadAction }
+        <button className="btn btn-secondary" onClick={ uploadAction }
                 disabled={!uploadAction || null}>
           <FontAwesomeIcon className="mr-2" icon={faUpload}/>
           Upload
