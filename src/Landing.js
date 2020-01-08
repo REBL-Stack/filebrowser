@@ -26,8 +26,9 @@ export default function Landing ({className}) {
           and upload, browse, and download files. For security and privacy,
           all files are encrypted in
           the browser before transmission to the online storage.</p>
-        <p>See the [README](https://github.com/REBL-Stack/Filebrowser/README.md)
-          for instructions about how to build the Filebrowser on your computer 
+        <p>See
+          the <a href="https://github.com/REBL-Stack/Filebrowser/README.md">README</a> file
+          for instructions about how to build the Filebrowser on your computer
           to view the files of your apps.
         </p>
         <p className="lead">
