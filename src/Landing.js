@@ -27,7 +27,7 @@ export default function Landing ({className}) {
           all files are encrypted in
           the browser before transmission to the online storage.</p>
         <p>See
-          the <a href="https://github.com/REBL-Stack/Filebrowser/README.md">README</a> file
+          the <a href="https://github.com/REBL-Stack/Filebrowser/">README</a> file
           for instructions about how to build the Filebrowser on your computer
           to view the files of your apps.
         </p>
