@@ -20,8 +20,9 @@ export default function Landing ({className}) {
           The FileBrowser is for Blockstack software developers to browse the online data files
           stored by their web apps during the development stage.
           It provides a behind-the-curtain view of
-          the data stored in <i title="Gaia is the online storage used by Blockstack apps">Gaia</i>, similar to how the Storage Inspector in the web browser
-          can show the data the apps store locally your browser.</p>
+          the data stored in <i title="Gaia is the online storage used by Blockstack apps">Gaia</i>,
+          similar to how the Storage Inspector in the web browser
+          shows data stored locally by the apps.</p>
           <p>You can check out its functionality by signing in below
           and upload, browse, and download files. For security and privacy,
           all files are encrypted in
