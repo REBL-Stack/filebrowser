@@ -5,6 +5,20 @@
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
     <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
     <title>FileBrowser</title>
+
+    <!-- Disable cookies https://stackoverflow.com/questions/10306254/is-it-possible-to-block-cookies-from-being-set-using-javascript-or-php -->
+    <script>
+      if(!document.__defineGetter__) {
+        Object.defineProperty(document, 'cookie', {
+          get: function(){return ''},
+          set: function(){return true},
+        });
+      } else {
+        document.__defineGetter__("cookie", function() { return '';} );
+        document.__defineSetter__("cookie", function() {} );
+      }
+    </script>
+    
   </head>
   <body class="d-flex flex-column">
     <nav class="navbar sticky-top navbar-dark bg-dark text-light">
