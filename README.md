@@ -1,8 +1,17 @@
 # Blockstack FileBrowser
 
-This project was bootstrapped from the [Blockstack:React App Generator](https://github.com/blockstack/blockstack-app-generator) which is based on [Create React App](https://github.com/facebook/create-react-app).
+The FileBrowser is for Blockstack software developers to browse the online data files
+stored by their web apps during the development stage.
+It provides a behind-the-curtain view of
+the data stored in Gaia, similar to how the Storage Inspector in the web browser
+can show the data the apps store locally your browser.
 
+For use during app development, clone/download this repository and
+run it with `npm start` on the same localhost
+port as your app. Sign in to browse the online files stored on Gaia.
 ## Available Scripts
+
+This project was bootstrapped from the [Blockstack:React App Generator](https://github.com/blockstack/blockstack-app-generator) which is based on [Create React App](https://github.com/facebook/create-react-app).
 
 First run:
 

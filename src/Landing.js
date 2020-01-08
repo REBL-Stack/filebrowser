@@ -17,19 +17,18 @@ export default function Landing ({className}) {
       <div className="panel-landing text-center mt-5">
 
         <p className="lead">
-          The FileBrowser is for software developers to browse the online data files
+          The FileBrowser is for Blockstack software developers to browse the online data files
           stored by their web apps during the development stage.
           It provides a behind-the-curtain view of
-          the data, similar to how the Storage Inspector in the web browser
+          the data stored in <i title="Gaia is the online storage used by Blockstack apps">Gaia</i>, similar to how the Storage Inspector in the web browser
           can show the data the apps store locally your browser.</p>
           <p>You can check out its functionality by signing in below
           and upload, browse, and download files. For security and privacy,
           all files are encrypted in
           the browser before transmission to the online storage.</p>
-        <p>For use during app development, download
-           the <a href="https://github.com/REBL-Stack/" target="_blank" rel="noopener noreferrer">repository</a> and
-           run it with <code>npm start</code> on the same localhost
-           port as your app. Sign in to browse its online files.
+        <p>See the [README](https://github.com/REBL-Stack/Filebrowser/README.md)
+          for instructions about how to build the Filebrowser on your computer 
+          to view the files of your apps.
         </p>
         <p className="lead">
           <BlockstackButton onClick={ signIn }/>

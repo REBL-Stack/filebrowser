@@ -47,9 +47,11 @@ export function useMatchGlobal() {
 const filesAtom = Atom.of([]) // file paths
 
 export function useFiles() {
+  const { userData } = useBlockstack()
   const [state, setState] = useState()
   const files = useAtom(filesAtom)
   const [filesList, filecount] = useFilesList()
+  const authenticated = !!userData
   useEffect(() => {
     swap(filesAtom, () => filesList)
   }, [filesList])
@@ -57,9 +59,13 @@ export function useFiles() {
     // TODO: Reuse existing file objects
     // console.log("FILES:", files, filesList)
     // ## Fix: eliminate fileName for pathname
-    setState(files.map((name) => ({fileName: name, pathname: name, fileSize: 0})))
+    if (authenticated) {
+      setState(files.map((name) => ({fileName: name, pathname: name, fileSize: 0})))
+    } else {
+      setState([])
+    }
   },[files])
-  return [state, !isNull(filecount)]
+  return [state, !isNull(filecount), authenticated]
 }
 
 function insertFile (file) {
