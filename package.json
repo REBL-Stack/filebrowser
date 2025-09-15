@@ -53,6 +53,6 @@
     "bootswatch": "^4.3.1",
     "bootstrap-material-design": "^4.1.2",
     "react-test-renderer": "^16.8.6",
-    "react-scripts": "^3.2.0"
+    "react-scripts": "^5.0.1"
   }
 }
